@@ -1,0 +1,16 @@
+// Safe build defaults. Override identifiers and signing in Local.xcconfig.
+MACOSX_DEPLOYMENT_TARGET = 13.0
+SWIFT_VERSION = 5.0
+SWIFT_STRICT_CONCURRENCY = targeted
+CLANG_ENABLE_MODULES = YES
+ENABLE_HARDENED_RUNTIME = YES
+CODE_SIGN_STYLE = Automatic
+
+DEVELOPMENT_TEAM =
+TAVERNBLINK_HOST_BUNDLE_ID = com.example.TavernBlink
+TAVERNBLINK_PROXY_BUNDLE_ID = com.example.TavernBlink.ProxyExtension
+TAVERNBLINK_APP_GROUP = group.com.example.TavernBlink
+TAVERNBLINK_MACH_SERVICE = $(TeamIdentifierPrefix)com.example.TavernBlink.ProxyExtension
+
+// A developer may create this ignored file from Local.xcconfig.example.
+#include? "Local.xcconfig"

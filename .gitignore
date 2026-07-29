@@ -1,0 +1,20 @@
+# Xcode
+DerivedData/
+build/
+*.xcarchive
+*.dSYM
+*.dSYM.zip
+xcuserdata/
+*.xcuserstate
+
+# Local signing and release inputs
+Config/Local.xcconfig
+ExportOptions.plist
+*.p12
+*.provisionprofile
+*.mobileprovision
+*.dmg
+
+# macOS
+.DS_Store
+

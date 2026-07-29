@@ -1,0 +1,1 @@
+test_id,date,macos_build,chip,hearthstone_version,expected_signing_id,actual_signing_id,target_flow_count,click_monotonic_ms,provider_received_ms,flows_closed_ms,new_flow_ms,game_recovered_ms,animation_skipped,result,notes

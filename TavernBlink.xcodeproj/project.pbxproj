@@ -1,0 +1,661 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B00100000000000000000001 /* TavernBlinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000001 /* TavernBlinkApp.swift */; };
+		B00100000000000000000002 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000002 /* MenuBarView.swift */; };
+		B00100000000000000000003 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000003 /* OnboardingView.swift */; };
+		B00100000000000000000004 /* AppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000004 /* AppStatus.swift */; };
+		B00100000000000000000005 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000005 /* AppModel.swift */; };
+		B00100000000000000000006 /* SystemExtensionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000006 /* SystemExtensionController.swift */; };
+		B00100000000000000000007 /* ProxyManagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000007 /* ProxyManagerController.swift */; };
+		B00100000000000000000008 /* ProviderMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000008 /* ProviderMessenger.swift */; };
+		B00100000000000000000009 /* TargetAppIdentityResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000009 /* TargetAppIdentityResolver.swift */; };
+		B00100000000000000000010 /* ProviderCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000001 /* ProviderCommand.swift */; };
+		B00100000000000000000011 /* ProviderResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000002 /* ProviderResponse.swift */; };
+		B00100000000000000000012 /* TargetAppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000003 /* TargetAppIdentity.swift */; };
+		B00100000000000000000013 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000004 /* AppConstants.swift */; };
+		B00100000000000000000014 /* SharedConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000005 /* SharedConfiguration.swift */; };
+		B00100000000000000000015 /* SystemExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000001 /* SystemExtensions.framework */; };
+		B00100000000000000000016 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
+		B00100000000000000000017 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* Security.framework */; };
+		B00100000000000000000018 /* TavernBlinkProxy.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = D00100000000000000000002 /* TavernBlinkProxy.systemextension */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+
+		B00200000000000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000001 /* main.swift */; };
+		B00200000000000000000002 /* TransparentProxyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000002 /* TransparentProxyProvider.swift */; };
+		B00200000000000000000003 /* FlowMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000003 /* FlowMatcher.swift */; };
+		B00200000000000000000004 /* FlowRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000004 /* FlowRegistry.swift */; };
+		B00200000000000000000005 /* TCPFlowRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000005 /* TCPFlowRelay.swift */; };
+		B00200000000000000000006 /* ProviderCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000001 /* ProviderCommand.swift */; };
+		B00200000000000000000007 /* ProviderResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000002 /* ProviderResponse.swift */; };
+		B00200000000000000000008 /* TargetAppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000003 /* TargetAppIdentity.swift */; };
+		B00200000000000000000009 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000004 /* AppConstants.swift */; };
+		B00200000000000000000010 /* SharedConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000005 /* SharedConfiguration.swift */; };
+		B00200000000000000000011 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
+		B00200000000000000000012 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* Network.framework */; };
+
+		B00300000000000000000001 /* ProviderCommandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000001 /* ProviderCommandTests.swift */; };
+		B00300000000000000000002 /* FlowMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000002 /* FlowMatcherTests.swift */; };
+		B00300000000000000000003 /* ProviderCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000001 /* ProviderCommand.swift */; };
+		B00300000000000000000004 /* ProviderResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000002 /* ProviderResponse.swift */; };
+		B00300000000000000000005 /* TargetAppIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000003 /* TargetAppIdentity.swift */; };
+		B00300000000000000000006 /* FlowMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000003 /* FlowMatcher.swift */; };
+		B00300000000000000000007 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000005 /* XCTest.framework */; };
+		B00300000000000000000008 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C00100000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E00100000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E00100000000000000000003;
+			remoteInfo = TavernBlinkProxy;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C00200000000000000000001 /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				B00100000000000000000018 /* TavernBlinkProxy.systemextension in Embed System Extensions */,
+			);
+			name = "Embed System Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D00100000000000000000001 /* TavernBlink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavernBlink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D00100000000000000000002 /* TavernBlinkProxy.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = TavernBlinkProxy.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
+		D00100000000000000000003 /* TavernBlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TavernBlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+
+		A00100000000000000000001 /* TavernBlinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TavernBlinkApp.swift; sourceTree = "<group>"; };
+		A00100000000000000000002 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		A00100000000000000000003 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A00100000000000000000004 /* AppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatus.swift; sourceTree = "<group>"; };
+		A00100000000000000000005 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		A00100000000000000000006 /* SystemExtensionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemExtensionController.swift; sourceTree = "<group>"; };
+		A00100000000000000000007 /* ProxyManagerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyManagerController.swift; sourceTree = "<group>"; };
+		A00100000000000000000008 /* ProviderMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderMessenger.swift; sourceTree = "<group>"; };
+		A00100000000000000000009 /* TargetAppIdentityResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetAppIdentityResolver.swift; sourceTree = "<group>"; };
+		A00100000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A00100000000000000000011 /* TavernBlink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TavernBlink.entitlements; sourceTree = "<group>"; };
+
+		S00100000000000000000001 /* ProviderCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderCommand.swift; sourceTree = "<group>"; };
+		S00100000000000000000002 /* ProviderResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderResponse.swift; sourceTree = "<group>"; };
+		S00100000000000000000003 /* TargetAppIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetAppIdentity.swift; sourceTree = "<group>"; };
+		S00100000000000000000004 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		S00100000000000000000005 /* SharedConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConfiguration.swift; sourceTree = "<group>"; };
+
+		P00100000000000000000001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		P00100000000000000000002 /* TransparentProxyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentProxyProvider.swift; sourceTree = "<group>"; };
+		P00100000000000000000003 /* FlowMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowMatcher.swift; sourceTree = "<group>"; };
+		P00100000000000000000004 /* FlowRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowRegistry.swift; sourceTree = "<group>"; };
+		P00100000000000000000005 /* TCPFlowRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPFlowRelay.swift; sourceTree = "<group>"; };
+		P00100000000000000000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		P00100000000000000000007 /* ProxyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProxyExtension.entitlements; sourceTree = "<group>"; };
+
+		T00100000000000000000001 /* ProviderCommandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderCommandTests.swift; sourceTree = "<group>"; };
+		T00100000000000000000002 /* FlowMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowMatcherTests.swift; sourceTree = "<group>"; };
+		T00100000000000000000003 /* EchoServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoServer.swift; sourceTree = "<group>"; };
+		T00100000000000000000004 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		T00100000000000000000005 /* phase-0-results.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "phase-0-results.csv"; sourceTree = "<group>"; };
+
+		F00100000000000000000001 /* SystemExtensions.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemExtensions.framework; path = System/Library/Frameworks/SystemExtensions.framework; sourceTree = SDKROOT; };
+		F00100000000000000000002 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		F00100000000000000000003 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		F00100000000000000000004 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
+		F00100000000000000000005 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+
+		X00100000000000000000001 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		X00100000000000000000002 /* Local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig.example; sourceTree = "<group>"; };
+		X00100000000000000000003 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		X00100000000000000000004 /* architecture.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = architecture.md; sourceTree = "<group>"; };
+		X00100000000000000000005 /* phase-0-checklist.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "phase-0-checklist.md"; sourceTree = "<group>"; };
+		X00100000000000000000006 /* release-checklist.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "release-checklist.md"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F00200000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000015 /* SystemExtensions.framework in Frameworks */,
+				B00100000000000000000016 /* NetworkExtension.framework in Frameworks */,
+				B00100000000000000000017 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00200000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00200000000000000000011 /* NetworkExtension.framework in Frameworks */,
+				B00200000000000000000012 /* Network.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F00200000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00300000000000000000007 /* XCTest.framework in Frameworks */,
+				B00300000000000000000008 /* NetworkExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		G00100000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				X00100000000000000000003 /* README.md */,
+				G00100000000000000000003 /* App */,
+				G00100000000000000000008 /* Shared */,
+				G00100000000000000000011 /* ProxyExtension */,
+				G00100000000000000000012 /* Tests */,
+				G00100000000000000000016 /* Config */,
+				G00100000000000000000017 /* docs */,
+				G00100000000000000000018 /* Frameworks */,
+				G00100000000000000000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		G00100000000000000000002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D00100000000000000000001 /* TavernBlink.app */,
+				D00100000000000000000002 /* TavernBlinkProxy.systemextension */,
+				D00100000000000000000003 /* TavernBlinkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A00100000000000000000001 /* TavernBlinkApp.swift */,
+				G00100000000000000000004 /* MenuBar */,
+				G00100000000000000000005 /* Onboarding */,
+				G00100000000000000000006 /* Models */,
+				G00100000000000000000007 /* Services */,
+				A00100000000000000000010 /* Info.plist */,
+				A00100000000000000000011 /* TavernBlink.entitlements */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000004 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (A00100000000000000000002 /* MenuBarView.swift */,);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000005 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (A00100000000000000000003 /* OnboardingView.swift */,);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000006 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A00100000000000000000004 /* AppStatus.swift */,
+				A00100000000000000000005 /* AppModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000007 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A00100000000000000000006 /* SystemExtensionController.swift */,
+				A00100000000000000000007 /* ProxyManagerController.swift */,
+				A00100000000000000000008 /* ProviderMessenger.swift */,
+				A00100000000000000000009 /* TargetAppIdentityResolver.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000008 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				G00100000000000000000009 /* IPC */,
+				G00100000000000000000010 /* Models */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000009 /* IPC */ = {
+			isa = PBXGroup;
+			children = (
+				S00100000000000000000001 /* ProviderCommand.swift */,
+				S00100000000000000000002 /* ProviderResponse.swift */,
+			);
+			path = IPC;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000010 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				S00100000000000000000003 /* TargetAppIdentity.swift */,
+				S00100000000000000000004 /* AppConstants.swift */,
+				S00100000000000000000005 /* SharedConfiguration.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000011 /* ProxyExtension */ = {
+			isa = PBXGroup;
+			children = (
+				P00100000000000000000001 /* main.swift */,
+				P00100000000000000000002 /* TransparentProxyProvider.swift */,
+				P00100000000000000000003 /* FlowMatcher.swift */,
+				P00100000000000000000004 /* FlowRegistry.swift */,
+				P00100000000000000000005 /* TCPFlowRelay.swift */,
+				P00100000000000000000006 /* Info.plist */,
+				P00100000000000000000007 /* ProxyExtension.entitlements */,
+			);
+			path = ProxyExtension;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000012 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				G00100000000000000000013 /* Unit */,
+				G00100000000000000000014 /* RelayHarness */,
+				G00100000000000000000015 /* Manual */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000013 /* Unit */ = {
+			isa = PBXGroup;
+			children = (
+				T00100000000000000000001 /* ProviderCommandTests.swift */,
+				T00100000000000000000002 /* FlowMatcherTests.swift */,
+			);
+			path = Unit;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000014 /* RelayHarness */ = {
+			isa = PBXGroup;
+			children = (
+				T00100000000000000000003 /* EchoServer.swift */,
+				T00100000000000000000004 /* README.md */,
+			);
+			path = RelayHarness;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000015 /* Manual */ = {
+			isa = PBXGroup;
+			children = (T00100000000000000000005 /* phase-0-results.csv */,);
+			path = Manual;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000016 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				X00100000000000000000001 /* Shared.xcconfig */,
+				X00100000000000000000002 /* Local.xcconfig.example */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000017 /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				X00100000000000000000004 /* architecture.md */,
+				X00100000000000000000005 /* phase-0-checklist.md */,
+				X00100000000000000000006 /* release-checklist.md */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000018 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F00100000000000000000001 /* SystemExtensions.framework */,
+				F00100000000000000000002 /* NetworkExtension.framework */,
+				F00100000000000000000003 /* Security.framework */,
+				F00100000000000000000004 /* Network.framework */,
+				F00100000000000000000005 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E00100000000000000000002 /* TavernBlink */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = L00100000000000000000002 /* Build configuration list for PBXNativeTarget "TavernBlink" */;
+			buildPhases = (
+				S00200000000000000000001 /* Sources */,
+				F00200000000000000000001 /* Frameworks */,
+				R00100000000000000000001 /* Resources */,
+				C00200000000000000000001 /* Embed System Extensions */,
+			);
+			buildRules = ();
+			dependencies = (N00100000000000000000001 /* PBXTargetDependency */,);
+			name = TavernBlink;
+			productName = TavernBlink;
+			productReference = D00100000000000000000001 /* TavernBlink.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E00100000000000000000003 /* TavernBlinkProxy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = L00100000000000000000003 /* Build configuration list for PBXNativeTarget "TavernBlinkProxy" */;
+			buildPhases = (
+				S00200000000000000000002 /* Sources */,
+				F00200000000000000000002 /* Frameworks */,
+				R00100000000000000000002 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = TavernBlinkProxy;
+			productName = TavernBlinkProxy;
+			productReference = D00100000000000000000002 /* TavernBlinkProxy.systemextension */;
+			productType = "com.apple.product-type.system-extension";
+		};
+		E00100000000000000000004 /* TavernBlinkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = L00100000000000000000004 /* Build configuration list for PBXNativeTarget "TavernBlinkTests" */;
+			buildPhases = (
+				S00200000000000000000003 /* Sources */,
+				F00200000000000000000003 /* Frameworks */,
+				R00100000000000000000003 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = TavernBlinkTests;
+			productName = TavernBlinkTests;
+			productReference = D00100000000000000000003 /* TavernBlinkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E00100000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					E00100000000000000000002 = {CreatedOnToolsVersion = 26.1; };
+					E00100000000000000000003 = {CreatedOnToolsVersion = 26.1; };
+					E00100000000000000000004 = {CreatedOnToolsVersion = 26.1; };
+				};
+			};
+			buildConfigurationList = L00100000000000000000001 /* Build configuration list for PBXProject "TavernBlink" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base,);
+			mainGroup = G00100000000000000000001;
+			productRefGroup = G00100000000000000000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E00100000000000000000002 /* TavernBlink */,
+				E00100000000000000000003 /* TavernBlinkProxy */,
+				E00100000000000000000004 /* TavernBlinkTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		R00100000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		R00100000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		R00100000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		S00200000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000001 /* TavernBlinkApp.swift in Sources */,
+				B00100000000000000000002 /* MenuBarView.swift in Sources */,
+				B00100000000000000000003 /* OnboardingView.swift in Sources */,
+				B00100000000000000000004 /* AppStatus.swift in Sources */,
+				B00100000000000000000005 /* AppModel.swift in Sources */,
+				B00100000000000000000006 /* SystemExtensionController.swift in Sources */,
+				B00100000000000000000007 /* ProxyManagerController.swift in Sources */,
+				B00100000000000000000008 /* ProviderMessenger.swift in Sources */,
+				B00100000000000000000009 /* TargetAppIdentityResolver.swift in Sources */,
+				B00100000000000000000010 /* ProviderCommand.swift in Sources */,
+				B00100000000000000000011 /* ProviderResponse.swift in Sources */,
+				B00100000000000000000012 /* TargetAppIdentity.swift in Sources */,
+				B00100000000000000000013 /* AppConstants.swift in Sources */,
+				B00100000000000000000014 /* SharedConfiguration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		S00200000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00200000000000000000001 /* main.swift in Sources */,
+				B00200000000000000000002 /* TransparentProxyProvider.swift in Sources */,
+				B00200000000000000000003 /* FlowMatcher.swift in Sources */,
+				B00200000000000000000004 /* FlowRegistry.swift in Sources */,
+				B00200000000000000000005 /* TCPFlowRelay.swift in Sources */,
+				B00200000000000000000006 /* ProviderCommand.swift in Sources */,
+				B00200000000000000000007 /* ProviderResponse.swift in Sources */,
+				B00200000000000000000008 /* TargetAppIdentity.swift in Sources */,
+				B00200000000000000000009 /* AppConstants.swift in Sources */,
+				B00200000000000000000010 /* SharedConfiguration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		S00200000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00300000000000000000001 /* ProviderCommandTests.swift in Sources */,
+				B00300000000000000000002 /* FlowMatcherTests.swift in Sources */,
+				B00300000000000000000003 /* ProviderCommand.swift in Sources */,
+				B00300000000000000000004 /* ProviderResponse.swift in Sources */,
+				B00300000000000000000005 /* TargetAppIdentity.swift in Sources */,
+				B00300000000000000000006 /* FlowMatcher.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		N00100000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E00100000000000000000003 /* TavernBlinkProxy */;
+			targetProxy = C00100000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		Q00100000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = X00100000000000000000001 /* Shared.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1", "$(inherited)",);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		Q00100000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = X00100000000000000000001 /* Shared.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		Q00200000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks",);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_HOST_BUNDLE_ID)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = NO;
+			};
+			name = Debug;
+		};
+		Q00200000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks",);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_HOST_BUNDLE_ID)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = NO;
+			};
+			name = Release;
+		};
+		Q00300000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ProxyExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@executable_path/../../../../Frameworks",);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_PROXY_BUNDLE_ID)";
+				PRODUCT_NAME = TavernBlinkProxy;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		Q00300000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ProxyExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks", "@executable_path/../../../../Frameworks",);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_PROXY_BUNDLE_ID)";
+				PRODUCT_NAME = TavernBlinkProxy;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		Q00400000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "";
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_HOST_BUNDLE_ID).Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		Q00400000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "";
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_HOST_BUNDLE_ID).Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		L00100000000000000000001 /* Build configuration list for PBXProject "TavernBlink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				Q00100000000000000000001 /* Debug */,
+				Q00100000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		L00100000000000000000002 /* Build configuration list for PBXNativeTarget "TavernBlink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				Q00200000000000000000001 /* Debug */,
+				Q00200000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		L00100000000000000000003 /* Build configuration list for PBXNativeTarget "TavernBlinkProxy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				Q00300000000000000000001 /* Debug */,
+				Q00300000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		L00100000000000000000004 /* Build configuration list for PBXNativeTarget "TavernBlinkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				Q00400000000000000000001 /* Debug */,
+				Q00400000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E00100000000000000000001 /* Project object */;
+}
