@@ -100,7 +100,6 @@
 		A00100000000000000000009 /* TargetAppIdentityResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetAppIdentityResolver.swift; sourceTree = "<group>"; };
 		A00100000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00100000000000000000011 /* TavernBlink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TavernBlink.entitlements; sourceTree = "<group>"; };
-		C6FF9CF230199C1100EAE0ED /* Local.xcconfig 2.example */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Local.xcconfig 2.example"; sourceTree = "<group>"; };
 		D00100000000000000000001 /* TavernBlink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavernBlink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000002 /* TavernBlinkProxy.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "$(TAVERNBLINK_PROXY_BUNDLE_ID).systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000003 /* TavernBlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TavernBlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -338,7 +337,6 @@
 			children = (
 				X00100000000000000000001 /* Shared.xcconfig */,
 				X00100000000000000000002 /* Local.xcconfig.example */,
-				C6FF9CF230199C1100EAE0ED /* Local.xcconfig 2.example */,
 			);
 			path = Config;
 			sourceTree = "<group>";
