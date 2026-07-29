@@ -4,7 +4,9 @@ final class ProviderCommandTests: XCTestCase {
     func testCommandRoundTripsWithIdentity() throws {
         let identity = TargetAppIdentity(
             displayName: "Hearthstone",
-            signingIdentifier: "com.example.hearthstone"
+            signingIdentifier: "com.example.hearthstone",
+            teamIdentifier: "ABCDE12345",
+            verificationMode: .completeBundle
         )
         let command = ProviderCommand(
             action: .updateTargetIdentity,

@@ -69,10 +69,11 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         completionHandler: @escaping () -> Void
     ) {
         setLifecycleState(.stopping)
-        let closed = registry.disconnectAll(reason: .providerStopped)
-        logger.notice("Transparent proxy stopped; closed \(closed) registered relays")
-        setLifecycleState(.stopped)
-        completionHandler()
+        registry.disconnectAll(reason: .providerStopped) { [self] closed in
+            self.logger.notice("Transparent proxy stopped; closed \(closed) registered relays")
+            self.setLifecycleState(.stopped)
+            completionHandler()
+        }
     }
 
     override func handleNewFlow(_ flow: NEAppProxyFlow) -> Bool {
@@ -120,11 +121,15 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         _ messageData: Data,
         completionHandler: ((Data?) -> Void)?
     ) {
-        let response = makeResponse(for: messageData)
-        completionHandler?(try? JSONEncoder().encode(response))
+        makeResponse(for: messageData) { response in
+            completionHandler?(try? JSONEncoder().encode(response))
+        }
     }
 
-    private func makeResponse(for data: Data) -> ProviderResponse {
+    private func makeResponse(
+        for data: Data,
+        completion: @escaping (ProviderResponse) -> Void
+    ) {
         let command: ProviderCommand
         do {
             command = try JSONDecoder().decode(ProviderCommand.self, from: data)
@@ -133,50 +138,62 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
                 "Rejected invalid provider message: \(error.localizedDescription, privacy: .public)"
             )
             let fallback = ProviderCommand(action: .status)
-            return providerResponse(
+            completion(providerResponse(
                 for: fallback,
                 result: .invalidCommand,
                 errorCode: "invalidCommand",
                 errorSummary: error.localizedDescription
-            )
+            ))
+            return
         }
 
-        if let cached = responseCache.response(for: command.requestID) {
+        switch responseCache.register(
+            requestID: command.requestID,
+            completion: completion
+        ) {
+        case let .cached(cached):
             messagingLogger.info(
                 "Returning cached response for request \(command.requestID.uuidString, privacy: .public)"
             )
-            return cached
+            completion(cached)
+            return
+        case .waiting:
+            messagingLogger.info(
+                "Waiting for in-flight response for request \(command.requestID.uuidString, privacy: .public)"
+            )
+            return
+        case .new:
+            break
         }
 
         messagingLogger.info(
             "Received provider action \(command.action.rawValue, privacy: .public), request \(command.requestID.uuidString, privacy: .public)"
         )
 
-        let response: ProviderResponse
         guard command.protocolVersion == ProviderCommand.currentProtocolVersion else {
-            response = providerResponse(
+            let response = providerResponse(
                 for: command,
                 result: .unsupportedProtocol,
                 errorCode: "unsupportedProtocol",
                 errorSummary: "Unsupported provider protocol version \(command.protocolVersion)"
             )
-            responseCache.insert(response)
-            return response
+            finishResponse(response)
+            return
         }
 
         switch command.action {
         case .status, .exportDiagnostics:
-            response = providerResponse(for: command)
+            finishResponse(providerResponse(for: command))
 
         case .updateTargetIdentity:
             guard let identity = command.targetIdentity else {
-                response = providerResponse(
+                finishResponse(providerResponse(
                     for: command,
                     result: .invalidCommand,
                     errorCode: "missingIdentity",
                     errorSummary: "updateTargetIdentity requires a verified identity"
-                )
-                break
+                ))
+                return
             }
             sharedConfiguration.targetIdentity = identity
             matcher.updateTargetIdentity(identity)
@@ -184,26 +201,30 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             matchingLogger.notice(
                 "Updated expected signing identifier to \(identity.signingIdentifier, privacy: .public) and reset flow observations"
             )
-            response = providerResponse(for: command)
+            finishResponse(providerResponse(for: command))
 
         case .disconnectNow:
             let start = ContinuousClock.now
-            let closedCount = registry.disconnectAll(reason: .userRequested)
-            let duration = start.duration(to: .now)
-            let milliseconds = Int(duration.components.seconds * 1_000)
-                + Int(duration.components.attoseconds / 1_000_000_000_000_000)
-            disconnectLogger.notice(
-                "Disconnect request closed \(closedCount) flow(s) in \(milliseconds) ms"
-            )
-            response = providerResponse(
-                for: command,
-                closedFlowCount: closedCount,
-                durationMilliseconds: milliseconds
-            )
+            registry.disconnectAll(reason: .userRequested) { [self] closedCount in
+                let duration = start.duration(to: .now)
+                let milliseconds = Int(duration.components.seconds * 1_000)
+                    + Int(duration.components.attoseconds / 1_000_000_000_000_000)
+                self.disconnectLogger.notice(
+                    "Disconnect request completed \(closedCount) flow close(s) in \(milliseconds) ms"
+                )
+                self.finishResponse(
+                    self.providerResponse(
+                        for: command,
+                        closedFlowCount: closedCount,
+                        durationMilliseconds: milliseconds
+                    )
+                )
+            }
         }
+    }
 
-        responseCache.insert(response)
-        return response
+    private func finishResponse(_ response: ProviderResponse) {
+        responseCache.resolve(response)
     }
 
     private var currentLifecycleState: ProviderDiagnostics.LifecycleState {
@@ -248,23 +269,43 @@ private enum ProviderError: LocalizedError {
 }
 
 private final class ProviderResponseCache {
+    enum Registration {
+        case cached(ProviderResponse)
+        case waiting
+        case new
+    }
+
+    typealias Completion = (ProviderResponse) -> Void
+
     private let queue = DispatchQueue(label: "dev.tavernblink.provider-response-cache")
     private let capacity: Int
     private var order: [UUID] = []
     private var responses: [UUID: ProviderResponse] = [:]
+    private var waiters: [UUID: [Completion]] = [:]
 
     init(capacity: Int) {
         self.capacity = max(1, capacity)
     }
 
-    func response(for requestID: UUID) -> ProviderResponse? {
+    func register(
+        requestID: UUID,
+        completion: @escaping Completion
+    ) -> Registration {
         queue.sync {
-            responses[requestID]
+            if let response = responses[requestID] {
+                return .cached(response)
+            }
+            if waiters[requestID] != nil {
+                waiters[requestID, default: []].append(completion)
+                return .waiting
+            }
+            waiters[requestID] = [completion]
+            return .new
         }
     }
 
-    func insert(_ response: ProviderResponse) {
-        queue.sync {
+    func resolve(_ response: ProviderResponse) {
+        let completions: [Completion] = queue.sync {
             let requestID = response.requestID
             if responses[requestID] == nil {
                 order.append(requestID)
@@ -274,6 +315,8 @@ private final class ProviderResponseCache {
             while order.count > capacity {
                 responses.removeValue(forKey: order.removeFirst())
             }
+            return waiters.removeValue(forKey: requestID) ?? []
         }
+        completions.forEach { $0(response) }
     }
 }

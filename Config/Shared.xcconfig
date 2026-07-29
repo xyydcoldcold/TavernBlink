@@ -10,7 +10,9 @@ DEVELOPMENT_TEAM =
 TAVERNBLINK_HOST_BUNDLE_ID = com.example.TavernBlink
 TAVERNBLINK_PROXY_BUNDLE_ID = com.example.TavernBlink.ProxyExtension
 TAVERNBLINK_APP_GROUP = group.com.example.TavernBlink
-TAVERNBLINK_MACH_SERVICE = $(TeamIdentifierPrefix)com.example.TavernBlink.ProxyExtension
+TAVERNBLINK_MACH_SERVICE = $(TAVERNBLINK_APP_GROUP).ProxyExtension
+TAVERNBLINK_APP_PROXY_ENTITLEMENT = app-proxy-provider
+TAVERNBLINK_APP_PROXY_ENTITLEMENT[config=Release] = app-proxy-provider-systemextension
 
 // A developer may create this ignored file from Local.xcconfig.example.
 #include? "Local.xcconfig"

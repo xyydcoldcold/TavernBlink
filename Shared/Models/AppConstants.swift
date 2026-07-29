@@ -3,6 +3,7 @@ import Foundation
 enum AppConstants {
     static let managerDescription = "TavernBlink Transparent Proxy"
     static let targetIdentityDefaultsKey = "targetAppIdentity"
+    static let targetApplicationPathDefaultsKey = "targetApplicationPath"
 
     static var proxyExtensionBundleIdentifier: String {
         value(forInfoKey: "ProxyExtensionBundleIdentifier")

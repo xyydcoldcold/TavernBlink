@@ -7,6 +7,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var status: AppStatus = .needsInstall
     @Published private(set) var targetIdentity: TargetAppIdentity?
     @Published private(set) var providerDiagnostics: ProviderDiagnostics?
+    @Published private(set) var activeFlowCount = 0
     @Published private(set) var lastError: String?
 
     private let systemExtensionController = SystemExtensionController()
@@ -15,6 +16,7 @@ final class AppModel: ObservableObject {
     private lazy var sharedConfiguration = SharedConfiguration()
     private var extensionState: SystemExtensionController.State = .notInstalled
     private var managerState: ProxyManagerController.State = .missing
+    private var statusRequestInFlight = false
 
     init() {
         systemExtensionController.onStateChange = { [weak self] state in
@@ -37,10 +39,7 @@ final class AppModel: ObservableObject {
     }
 
     var canDisconnect: Bool {
-        if case .readyWithFlow = status {
-            return true
-        }
-        return false
+        activeFlowCount > 0 && managerState == .connected
     }
 
     func refresh() {
@@ -74,8 +73,10 @@ final class AppModel: ObservableObject {
         }
 
         do {
-            let identity = try identityResolver.resolveApplication(at: url)
+            let selectedURL = url.standardizedFileURL.resolvingSymlinksInPath()
+            let identity = try identityResolver.resolveApplication(at: selectedURL)
             sharedConfiguration.targetIdentity = identity
+            sharedConfiguration.targetApplicationPath = selectedURL.path
             targetIdentity = identity
             lastError = nil
         } catch {
@@ -85,8 +86,27 @@ final class AppModel: ObservableObject {
     }
 
     func configureAndStartProxy() {
-        guard let targetIdentity else {
+        guard targetIdentity != nil else {
             lastError = "Choose and verify Hearthstone first."
+            return
+        }
+
+        guard let targetApplicationPath = sharedConfiguration.targetApplicationPath else {
+            status = .error
+            lastError = "Choose Hearthstone again so TavernBlink can reverify it before starting."
+            return
+        }
+
+        let targetIdentity: TargetAppIdentity
+        do {
+            targetIdentity = try identityResolver.resolveApplication(
+                at: URL(fileURLWithPath: targetApplicationPath)
+            )
+            sharedConfiguration.targetIdentity = targetIdentity
+            self.targetIdentity = targetIdentity
+        } catch {
+            status = .error
+            lastError = "Hearthstone revalidation failed: \(error.localizedDescription)"
             return
         }
 
@@ -114,6 +134,7 @@ final class AppModel: ObservableObject {
                 guard let self else { return }
                 switch result {
                 case let .success(response):
+                    self.activeFlowCount = response.activeFlowCount
                     if response.closedFlowCount == 0 {
                         self.status = .readyNoFlow
                     } else {
@@ -133,6 +154,7 @@ final class AppModel: ObservableObject {
                 guard let self else { return }
                 switch result {
                 case .success:
+                    self.activeFlowCount = 0
                     self.status = .configurationMissing
                 case let .failure(error):
                     self.status = .error
@@ -159,9 +181,14 @@ final class AppModel: ObservableObject {
     }
 
     private func requestProviderStatus() {
+        guard !statusRequestInFlight else {
+            return
+        }
+        statusRequestInFlight = true
         proxyManagerController.send(ProviderCommand(action: .status)) { [weak self] result in
             Task { @MainActor in
                 guard let self else { return }
+                self.statusRequestInFlight = false
                 switch result {
                 case let .success(response):
                     self.apply(response)
@@ -174,6 +201,7 @@ final class AppModel: ObservableObject {
     }
 
     private func apply(_ response: ProviderResponse) {
+        activeFlowCount = response.activeFlowCount
         providerDiagnostics = response.diagnostics
         guard response.result == .ok else {
             status = .error
@@ -201,8 +229,12 @@ final class AppModel: ObservableObject {
 
     private func handleManagerLoad(_ result: Result<NETransparentProxyManager?, Error>) {
         switch result {
-        case .success:
-            reconcileStatus()
+        case let .success(manager):
+            if manager?.connection.status == .connected {
+                requestProviderStatus()
+            } else {
+                reconcileStatus()
+            }
         case let .failure(error):
             status = .error
             lastError = error.localizedDescription
@@ -210,9 +242,13 @@ final class AppModel: ObservableObject {
     }
 
     private func handleManagerState(_ state: ProxyManagerController.State) {
+        let previousState = managerState
         managerState = state
+        if state != .connected {
+            activeFlowCount = 0
+        }
         reconcileStatus()
-        if state == .connected {
+        if state == .connected, previousState != .connected {
             requestProviderStatus()
         }
     }
@@ -232,7 +268,9 @@ final class AppModel: ObservableObject {
             case .connecting, .reasserting, .disconnecting:
                 status = .starting
             case .connected:
-                status = .readyNoFlow
+                status = activeFlowCount > 0
+                    ? .readyWithFlow(activeFlowCount)
+                    : .readyNoFlow
             }
         }
     }

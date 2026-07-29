@@ -13,7 +13,10 @@ struct OnboardingView: View {
             GroupBox("Required order") {
                 VStack(alignment: .leading, spacing: 10) {
                     Label("Install and approve the Network System Extension.", systemImage: "1.circle")
-                    Label("Choose the installed Hearthstone app and verify its signing identifier.", systemImage: "2.circle")
+                    Label(
+                        "Choose Hearthstone and verify its Blizzard signing ID and Team ID.",
+                        systemImage: "2.circle"
+                    )
                     Label("Save and start the transparent proxy configuration.", systemImage: "3.circle")
                     Label("Restart Hearthstone so new flows can reach the provider.", systemImage: "4.circle")
                 }

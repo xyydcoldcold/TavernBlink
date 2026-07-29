@@ -1,6 +1,7 @@
 import Foundation
 import Network
 import NetworkExtension
+import OSLog
 
 final class TCPFlowRelay: RelayControlling {
     enum State: Equatable {
@@ -29,10 +30,15 @@ final class TCPFlowRelay: RelayControlling {
     private var state: State = .created
     private var timeoutWorkItem: DispatchWorkItem?
     private var onClose: ((UUID) -> Void)?
+    private var closeCompletions: [() -> Void] = []
     private var clientReadFinished = false
     private var upstreamReadFinished = false
     private var didCloseFlowRead = false
     private var didCloseFlowWrite = false
+    private let logger = Logger(
+        subsystem: "dev.tavernblink.TavernBlink.ProxyExtension",
+        category: "relay"
+    )
 
     convenience init(
         flow: NEAppProxyTCPFlow,
@@ -76,9 +82,18 @@ final class TCPFlowRelay: RelayControlling {
         }
     }
 
-    func close(reason: RelayCloseReason) {
+    func close(reason: RelayCloseReason, completion: @escaping () -> Void) {
         queue.async { [weak self] in
-            self?.finishClose(reason: reason)
+            guard let self else {
+                completion()
+                return
+            }
+            if self.isClosingOrClosed {
+                completion()
+                return
+            }
+            self.closeCompletions.append(completion)
+            self.finishClose(reason: reason)
         }
     }
 
@@ -152,6 +167,7 @@ final class TCPFlowRelay: RelayControlling {
         }
 
         state = .relaying
+        logger.notice("Relay \(self.id.uuidString, privacy: .public) entered relaying state")
         readFromClient()
         readFromUpstream()
     }
@@ -314,9 +330,22 @@ final class TCPFlowRelay: RelayControlling {
         connection.cancel()
 
         state = .closed(reason)
+        if let error {
+            logger.error(
+                "Relay \(self.id.uuidString, privacy: .public) closed with \(reason.rawValue, privacy: .public): \(error.localizedDescription, privacy: .public)"
+            )
+        } else {
+            logger.notice(
+                "Relay \(self.id.uuidString, privacy: .public) closed with \(reason.rawValue, privacy: .public)"
+            )
+        }
         let callback = onClose
         onClose = nil
         callback?(id)
+
+        let completions = closeCompletions
+        closeCompletions.removeAll()
+        completions.forEach { $0() }
     }
 
     private func closeFlowReadOnce(error: Error?) {
@@ -339,11 +368,13 @@ final class TCPFlowRelay: RelayControlling {
         let code: Int
         switch reason {
         case .userRequested, .providerStopped:
-            code = 5 // NEAppProxyFlowError.aborted
+            code = reason == .userRequested
+                ? NEAppProxyFlowError.Code.peerReset.rawValue
+                : NEAppProxyFlowError.Code.aborted.rawValue
         case .upstreamFailed:
-            code = 3 // NEAppProxyFlowError.hostUnreachable
+            code = NEAppProxyFlowError.Code.hostUnreachable.rawValue
         case .clientFailed, .completed:
-            code = 8 // NEAppProxyFlowError.internal
+            code = NEAppProxyFlowError.Code.internal.rawValue
         }
         return NSError(
             domain: NEAppProxyErrorDomain,

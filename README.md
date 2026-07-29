@@ -24,6 +24,14 @@ block per direction and can be closed through versioned provider messaging.
 Signed physical-Mac and real-game testing are still required before the route
 can pass Phase 0.
 
+Target selection requires Blizzard Team ID `G847MC6JZ5` and signing identifier
+`unity.Blizzard Entertainment.Hearthstone`. TavernBlink first performs complete
+static validation. For current Battle.net installations that fail only because
+of a bundle resource-seal error, it may retry while skipping resources, but it
+still validates all architectures and present nested code against the fixed
+Blizzard designated requirement. The UI reports this reduced verification mode,
+and the app revalidates immediately before every proxy start.
+
 ## Requirements
 
 - macOS 13 or newer

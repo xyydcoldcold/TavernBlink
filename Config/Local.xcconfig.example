@@ -3,5 +3,3 @@ DEVELOPMENT_TEAM = ABCDE12345
 TAVERNBLINK_HOST_BUNDLE_ID = com.yourcompany.TavernBlink
 TAVERNBLINK_PROXY_BUNDLE_ID = com.yourcompany.TavernBlink.ProxyExtension
 TAVERNBLINK_APP_GROUP = group.com.yourcompany.TavernBlink
-TAVERNBLINK_MACH_SERVICE = $(TeamIdentifierPrefix)com.yourcompany.TavernBlink.ProxyExtension
-

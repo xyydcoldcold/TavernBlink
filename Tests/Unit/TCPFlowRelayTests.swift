@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import NetworkExtension
 import XCTest
 
 final class TCPFlowRelayTests: XCTestCase {
@@ -110,6 +111,32 @@ final class TCPFlowRelayTests: XCTestCase {
         XCTAssertEqual(flow.closeWriteCallCount, 1)
         XCTAssertEqual(connection.cancelCallCount, 1)
         XCTAssertEqual(relay.currentState, .closed(.userRequested))
+    }
+
+    func testUserCloseReportsPeerResetAndCompletesAfterClosingBothDirections() {
+        let completed = expectation(description: "close completed")
+        let flow = ControlledRelayFlow()
+        let connection = ControlledRelayConnection()
+        let relay = TCPFlowRelay(
+            flow: flow,
+            connection: connection,
+            onClose: { _ in }
+        )
+        relay.start()
+
+        XCTAssertTrue(eventually { relay.currentState == .relaying })
+        relay.close(reason: .userRequested) {
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 2)
+
+        XCTAssertEqual(flow.closeReadError?.domain, NEAppProxyErrorDomain)
+        XCTAssertEqual(
+            flow.closeReadError?.code,
+            NEAppProxyFlowError.Code.peerReset.rawValue
+        )
+        XCTAssertEqual(flow.closeWriteError, flow.closeReadError)
+        XCTAssertEqual(connection.cancelCallCount, 1)
     }
 
     func testConnectionTimeoutAndClientOpenFailureCloseCleanly() {
@@ -233,8 +260,20 @@ final class TCPFlowRelayTests: XCTestCase {
         registry.remove(id: removed.id)
 
         XCTAssertEqual(registry.activeCount, 1)
-        XCTAssertEqual(registry.disconnectAll(reason: .providerStopped), 1)
-        XCTAssertEqual(registry.disconnectAll(reason: .providerStopped), 0)
+        let first = expectation(description: "first disconnect")
+        registry.disconnectAll(reason: .providerStopped) { count in
+            XCTAssertEqual(count, 1)
+            XCTAssertEqual(registry.activeCount, 0)
+            first.fulfill()
+        }
+        wait(for: [first], timeout: 2)
+
+        let second = expectation(description: "second disconnect")
+        registry.disconnectAll(reason: .providerStopped) { count in
+            XCTAssertEqual(count, 0)
+            second.fulfill()
+        }
+        wait(for: [second], timeout: 2)
         XCTAssertTrue(removed.closeReasons.isEmpty)
         XCTAssertEqual(retained.closeReasons, [.providerStopped])
     }
@@ -407,6 +446,8 @@ private final class ControlledRelayFlow: RelayFlowIO {
     private(set) var writeCallCount = 0
     private(set) var closeReadCallCount = 0
     private(set) var closeWriteCallCount = 0
+    private(set) var closeReadError: NSError?
+    private(set) var closeWriteError: NSError?
 
     func enqueueRead(_ data: Data?) {
         lock.lock()
@@ -460,16 +501,16 @@ private final class ControlledRelayFlow: RelayFlowIO {
     }
 
     func closeRead(error: Error?) {
-        _ = error
         lock.lock()
         closeReadCallCount += 1
+        closeReadError = error as NSError?
         lock.unlock()
     }
 
     func closeWrite(error: Error?) {
-        _ = error
         lock.lock()
         closeWriteCallCount += 1
+        closeWriteError = error as NSError?
         lock.unlock()
     }
 }
@@ -553,7 +594,8 @@ private final class StubRelay: RelayControlling {
     let id = UUID()
     private(set) var closeReasons: [RelayCloseReason] = []
 
-    func close(reason: RelayCloseReason) {
+    func close(reason: RelayCloseReason, completion: @escaping () -> Void) {
         closeReasons.append(reason)
+        completion()
     }
 }

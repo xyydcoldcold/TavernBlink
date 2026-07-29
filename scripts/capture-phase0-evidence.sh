@@ -11,7 +11,7 @@ EXPECTED_HOST_BUNDLE_ID="$2"
 EXPECTED_EXTENSION_BUNDLE_ID="$3"
 EXPECTED_APP_GROUP="$4"
 EVIDENCE_DIR="${5:-build/phase0-evidence}"
-EXTENSION_PATH="$APP_PATH/Contents/Library/SystemExtensions/TavernBlinkProxy.systemextension"
+EXTENSION_PATH="$APP_PATH/Contents/Library/SystemExtensions/$EXPECTED_EXTENSION_BUNDLE_ID.systemextension"
 HOST_ENTITLEMENTS="$EVIDENCE_DIR/host-entitlements.plist"
 EXTENSION_ENTITLEMENTS="$EVIDENCE_DIR/extension-entitlements.plist"
 SUMMARY_PATH="$EVIDENCE_DIR/summary.txt"
@@ -66,8 +66,8 @@ require_value "$EXTENSION_ENTITLEMENTS" "com.apple.security.network.client" "tru
 
 MACH_SERVICE_NAME="$(plist_value "$EXTENSION_PATH/Contents/Info.plist" "NetworkExtension:NEMachServiceName")"
 case "$MACH_SERVICE_NAME" in
-  *"$EXPECTED_EXTENSION_BUNDLE_ID") ;;
-  *) fail "NEMachServiceName does not end with the extension bundle identifier" ;;
+  "$EXPECTED_APP_GROUP"*) ;;
+  *) fail "NEMachServiceName is not prefixed by the expected App Group" ;;
 esac
 
 require_universal_binary "$APP_PATH/Contents/MacOS/TavernBlink"

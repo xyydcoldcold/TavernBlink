@@ -27,4 +27,17 @@ final class SharedConfiguration {
             }
         }
     }
+
+    var targetApplicationPath: String? {
+        get {
+            defaults.string(forKey: AppConstants.targetApplicationPathDefaultsKey)
+        }
+        set {
+            if let newValue, !newValue.isEmpty {
+                defaults.set(newValue, forKey: AppConstants.targetApplicationPathDefaultsKey)
+            } else {
+                defaults.removeObject(forKey: AppConstants.targetApplicationPathDefaultsKey)
+            }
+        }
+    }
 }

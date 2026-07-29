@@ -26,6 +26,17 @@ struct MenuBarView: View {
                         .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
+                    Text("Team ID: \(identity.teamIdentifier)")
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.secondary)
+                    if identity.verificationMode == .codeSignatureOnly {
+                        Label(
+                            "Blizzard code verified; bundle resources were not fully verified.",
+                            systemImage: "exclamationmark.shield"
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                    }
                 }
             } else {
                 Text("No verified Hearthstone application selected.")

@@ -3,6 +3,8 @@ import NetworkExtension
 import OSLog
 
 final class ProxyManagerController {
+    static let providerServerAddress = "127.0.0.1"
+
     enum State: Equatable {
         case missing
         case disabled
@@ -90,11 +92,9 @@ final class ProxyManagerController {
                 completion(.failure(error))
             case let .success(existing):
                 let manager = existing ?? NETransparentProxyManager()
-                let providerProtocol = NETunnelProviderProtocol()
-                providerProtocol.providerBundleIdentifier = AppConstants.proxyExtensionBundleIdentifier
-                providerProtocol.providerConfiguration = [
-                    "protocolVersion": ProviderCommand.currentProtocolVersion
-                ]
+                let providerProtocol = Self.makeProviderProtocol(
+                    providerBundleIdentifier: AppConstants.proxyExtensionBundleIdentifier
+                )
 
                 manager.localizedDescription = AppConstants.managerDescription
                 manager.protocolConfiguration = providerProtocol
@@ -127,6 +127,20 @@ final class ProxyManagerController {
                 }
             }
         }
+    }
+
+    static func makeProviderProtocol(
+        providerBundleIdentifier: String
+    ) -> NETunnelProviderProtocol {
+        let providerProtocol = NETunnelProviderProtocol()
+        providerProtocol.providerBundleIdentifier = providerBundleIdentifier
+        // NetworkExtension requires this field even though a transparent proxy
+        // does not connect to a traditional VPN server.
+        providerProtocol.serverAddress = providerServerAddress
+        providerProtocol.providerConfiguration = [
+            "protocolVersion": ProviderCommand.currentProtocolVersion
+        ]
+        return providerProtocol
     }
 
     private func waitForConnection(
