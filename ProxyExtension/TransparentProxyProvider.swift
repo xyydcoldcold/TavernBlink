@@ -7,16 +7,35 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         subsystem: "dev.tavernblink.TavernBlink.ProxyExtension",
         category: "provider"
     )
+    private let matchingLogger = Logger(
+        subsystem: "dev.tavernblink.TavernBlink.ProxyExtension",
+        category: "matching"
+    )
+    private let disconnectLogger = Logger(
+        subsystem: "dev.tavernblink.TavernBlink.ProxyExtension",
+        category: "disconnect"
+    )
+    private let messagingLogger = Logger(
+        subsystem: "dev.tavernblink.TavernBlink.ProxyExtension",
+        category: "messaging"
+    )
     private let registry = FlowRegistry()
     private let responseCache = ProviderResponseCache(capacity: 128)
+    private let observations = FlowObservationStore(identifierCapacity: 128)
+    private let lifecycleQueue = DispatchQueue(label: "dev.tavernblink.provider-lifecycle")
     private lazy var sharedConfiguration = SharedConfiguration()
     private lazy var matcher = FlowMatcher(targetIdentity: sharedConfiguration.targetIdentity)
-    private var isReady = false
+    private var lifecycleState: ProviderDiagnostics.LifecycleState = .starting
 
     override func startProxy(
         options: [String: Any]? = nil,
         completionHandler: @escaping (Error?) -> Void
     ) {
+        setLifecycleState(.starting)
+        let targetIdentity = sharedConfiguration.targetIdentity
+        matcher.updateTargetIdentity(targetIdentity)
+        observations.reset(expectedSigningIdentifier: targetIdentity?.signingIdentifier)
+
         let settings = NETransparentProxyNetworkSettings(tunnelRemoteAddress: "127.0.0.1")
         settings.includedNetworkRules = [
             NENetworkRule(
@@ -39,7 +58,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
                 completionHandler(error)
                 return
             }
-            self.isReady = true
+            self.setLifecycleState(.readyFailOpen)
             self.logger.notice("Transparent proxy started in fail-open scaffold mode")
             completionHandler(nil)
         }
@@ -49,25 +68,42 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         with reason: NEProviderStopReason,
         completionHandler: @escaping () -> Void
     ) {
-        isReady = false
+        setLifecycleState(.stopping)
         let closed = registry.disconnectAll(reason: .providerStopped)
         logger.notice("Transparent proxy stopped; closed \(closed) registered relays")
+        setLifecycleState(.stopped)
         completionHandler()
     }
 
     override func handleNewFlow(_ flow: NEAppProxyFlow) -> Bool {
-        guard isReady, flow is NEAppProxyTCPFlow else {
+        guard currentLifecycleState == .readyFailOpen,
+              let tcpFlow = flow as? NEAppProxyTCPFlow
+        else {
             return false
         }
 
-        guard matcher.matches(flow.metaData) else {
+        let signingIdentifier = tcpFlow.metaData.sourceAppSigningIdentifier
+        let observation = observations.observe(signingIdentifier: signingIdentifier)
+        let endpointKind = tcpFlow.remoteHostname == nil ? "address" : "hostname"
+
+        if observation.shouldLogMissingIdentifier {
+            matchingLogger.notice(
+                "Observed TCP flow without a source signing identifier; endpoint kind \(endpointKind, privacy: .public)"
+            )
+        } else if observation.shouldLogIdentifier, let identifier = observation.signingIdentifier {
+            matchingLogger.notice(
+                "Observed source signing identifier \(identifier, privacy: .public); matched target: \(observation.matchedTarget); endpoint kind: \(endpointKind, privacy: .public)"
+            )
+        }
+
+        guard matcher.matches(signingIdentifier: signingIdentifier) else {
             return false
         }
 
         // Phase 0 safety boundary: an incomplete relay must never claim a flow.
         // Enable this path only after TCPFlowRelay passes the bounded-buffer echo
         // harness and its close paths are integrated with FlowRegistry.
-        logger.debug("Observed target signing identifier; leaving flow to the system")
+        matchingLogger.debug("Observed target TCP flow; leaving it to the system")
         return false
     }
 
@@ -84,26 +120,34 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         do {
             command = try JSONDecoder().decode(ProviderCommand.self, from: data)
         } catch {
+            messagingLogger.error(
+                "Rejected invalid provider message: \(error.localizedDescription, privacy: .public)"
+            )
             let fallback = ProviderCommand(action: .status)
-            return .status(
+            return providerResponse(
                 for: fallback,
                 result: .invalidCommand,
-                activeFlowCount: registry.activeCount,
                 errorCode: "invalidCommand",
                 errorSummary: error.localizedDescription
             )
         }
 
         if let cached = responseCache.response(for: command.requestID) {
+            messagingLogger.info(
+                "Returning cached response for request \(command.requestID.uuidString, privacy: .public)"
+            )
             return cached
         }
 
+        messagingLogger.info(
+            "Received provider action \(command.action.rawValue, privacy: .public), request \(command.requestID.uuidString, privacy: .public)"
+        )
+
         let response: ProviderResponse
         guard command.protocolVersion == ProviderCommand.currentProtocolVersion else {
-            response = .status(
+            response = providerResponse(
                 for: command,
                 result: .unsupportedProtocol,
-                activeFlowCount: registry.activeCount,
                 errorCode: "unsupportedProtocol",
                 errorSummary: "Unsupported provider protocol version \(command.protocolVersion)"
             )
@@ -113,14 +157,13 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
 
         switch command.action {
         case .status, .exportDiagnostics:
-            response = .status(for: command, activeFlowCount: registry.activeCount)
+            response = providerResponse(for: command)
 
         case .updateTargetIdentity:
             guard let identity = command.targetIdentity else {
-                response = .status(
+                response = providerResponse(
                     for: command,
                     result: .invalidCommand,
-                    activeFlowCount: registry.activeCount,
                     errorCode: "missingIdentity",
                     errorSummary: "updateTargetIdentity requires a verified identity"
                 )
@@ -128,7 +171,11 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             }
             sharedConfiguration.targetIdentity = identity
             matcher.updateTargetIdentity(identity)
-            response = .status(for: command, activeFlowCount: registry.activeCount)
+            observations.reset(expectedSigningIdentifier: identity.signingIdentifier)
+            matchingLogger.notice(
+                "Updated expected signing identifier to \(identity.signingIdentifier, privacy: .public) and reset flow observations"
+            )
+            response = providerResponse(for: command)
 
         case .disconnectNow:
             let start = ContinuousClock.now
@@ -136,9 +183,11 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             let duration = start.duration(to: .now)
             let milliseconds = Int(duration.components.seconds * 1_000)
                 + Int(duration.components.attoseconds / 1_000_000_000_000_000)
-            response = .status(
+            disconnectLogger.notice(
+                "Disconnect request closed \(closedCount) flow(s) in \(milliseconds) ms"
+            )
+            response = providerResponse(
                 for: command,
-                activeFlowCount: registry.activeCount,
                 closedFlowCount: closedCount,
                 durationMilliseconds: milliseconds
             )
@@ -146,6 +195,38 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
 
         responseCache.insert(response)
         return response
+    }
+
+    private var currentLifecycleState: ProviderDiagnostics.LifecycleState {
+        lifecycleQueue.sync {
+            lifecycleState
+        }
+    }
+
+    private func setLifecycleState(_ state: ProviderDiagnostics.LifecycleState) {
+        lifecycleQueue.sync {
+            lifecycleState = state
+        }
+    }
+
+    private func providerResponse(
+        for command: ProviderCommand,
+        result: ProviderResponse.Result = .ok,
+        closedFlowCount: Int = 0,
+        durationMilliseconds: Int = 0,
+        errorCode: String? = nil,
+        errorSummary: String? = nil
+    ) -> ProviderResponse {
+        .status(
+            for: command,
+            result: result,
+            activeFlowCount: registry.activeCount,
+            closedFlowCount: closedFlowCount,
+            durationMilliseconds: durationMilliseconds,
+            errorCode: errorCode,
+            errorSummary: errorSummary,
+            diagnostics: observations.snapshot(lifecycleState: currentLifecycleState)
+        )
     }
 }
 

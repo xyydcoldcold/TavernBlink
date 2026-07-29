@@ -1,5 +1,22 @@
 import Foundation
 
+struct ProviderDiagnostics: Codable, Equatable {
+    enum LifecycleState: String, Codable {
+        case starting
+        case readyFailOpen
+        case stopping
+        case stopped
+    }
+
+    let lifecycleState: LifecycleState
+    let expectedSigningIdentifier: String?
+    let lastObservedSigningIdentifier: String?
+    let observedTCPFlowCount: Int
+    let matchedTCPFlowCount: Int
+    let missingSigningIdentifierCount: Int
+    let identifierLogCapacityReached: Bool
+}
+
 struct ProviderResponse: Codable, Equatable {
     enum Result: String, Codable {
         case ok
@@ -17,6 +34,7 @@ struct ProviderResponse: Codable, Equatable {
     let durationMilliseconds: Int
     let errorCode: String?
     let errorSummary: String?
+    let diagnostics: ProviderDiagnostics?
 
     static func status(
         for command: ProviderCommand,
@@ -25,7 +43,8 @@ struct ProviderResponse: Codable, Equatable {
         closedFlowCount: Int = 0,
         durationMilliseconds: Int = 0,
         errorCode: String? = nil,
-        errorSummary: String? = nil
+        errorSummary: String? = nil,
+        diagnostics: ProviderDiagnostics? = nil
     ) -> ProviderResponse {
         ProviderResponse(
             protocolVersion: ProviderCommand.currentProtocolVersion,
@@ -35,7 +54,8 @@ struct ProviderResponse: Codable, Equatable {
             closedFlowCount: closedFlowCount,
             durationMilliseconds: durationMilliseconds,
             errorCode: errorCode,
-            errorSummary: errorSummary
+            errorSummary: errorSummary,
+            diagnostics: diagnostics
         )
     }
 }

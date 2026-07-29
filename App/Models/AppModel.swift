@@ -6,12 +6,15 @@ import NetworkExtension
 final class AppModel: ObservableObject {
     @Published private(set) var status: AppStatus = .needsInstall
     @Published private(set) var targetIdentity: TargetAppIdentity?
+    @Published private(set) var providerDiagnostics: ProviderDiagnostics?
     @Published private(set) var lastError: String?
 
     private let systemExtensionController = SystemExtensionController()
     private let proxyManagerController = ProxyManagerController()
     private let identityResolver = TargetAppIdentityResolver()
     private lazy var sharedConfiguration = SharedConfiguration()
+    private var extensionState: SystemExtensionController.State = .notInstalled
+    private var managerState: ProxyManagerController.State = .missing
 
     init() {
         systemExtensionController.onStateChange = { [weak self] state in
@@ -19,10 +22,18 @@ final class AppModel: ObservableObject {
                 self?.handleActivationState(state)
             }
         }
+        proxyManagerController.onStateChange = { [weak self] state in
+            Task { @MainActor in
+                self?.handleManagerState(state)
+            }
+        }
     }
 
     var canConfigureProxy: Bool {
-        targetIdentity != nil && status != .starting && status != .disconnecting
+        guard case .activated = extensionState else {
+            return false
+        }
+        return targetIdentity != nil && status != .starting && status != .disconnecting
     }
 
     var canDisconnect: Bool {
@@ -163,6 +174,7 @@ final class AppModel: ObservableObject {
     }
 
     private func apply(_ response: ProviderResponse) {
+        providerDiagnostics = response.diagnostics
         guard response.result == .ok else {
             status = .error
             lastError = response.errorSummary ?? response.result.rawValue
@@ -174,16 +186,13 @@ final class AppModel: ObservableObject {
     }
 
     private func handleActivationState(_ state: SystemExtensionController.State) {
+        extensionState = state
         switch state {
-        case .idle:
-            break
-        case .needsApproval:
-            status = .needsApproval
-        case .activated:
-            status = .configurationMissing
+        case .notInstalled, .disabled, .needsApproval, .activated:
+            reconcileStatus()
         case .rebootRequired:
-            status = .needsApproval
             lastError = "A restart is required to finish activating the extension."
+            reconcileStatus()
         case let .failed(error):
             status = .error
             lastError = error.localizedDescription
@@ -192,24 +201,39 @@ final class AppModel: ObservableObject {
 
     private func handleManagerLoad(_ result: Result<NETransparentProxyManager?, Error>) {
         switch result {
-        case let .success(manager):
-            guard let manager else {
-                if status != .needsApproval {
-                    status = .configurationMissing
-                }
-                return
-            }
-            switch manager.connection.status {
-            case .connected:
-                requestProviderStatus()
-            case .connecting, .reasserting:
-                status = .starting
-            default:
-                status = .configurationMissing
-            }
+        case .success:
+            reconcileStatus()
         case let .failure(error):
             status = .error
             lastError = error.localizedDescription
+        }
+    }
+
+    private func handleManagerState(_ state: ProxyManagerController.State) {
+        managerState = state
+        reconcileStatus()
+        if state == .connected {
+            requestProviderStatus()
+        }
+    }
+
+    private func reconcileStatus() {
+        switch extensionState {
+        case .notInstalled, .disabled:
+            status = .needsInstall
+        case .needsApproval, .rebootRequired:
+            status = .needsApproval
+        case .failed:
+            status = .error
+        case .activated:
+            switch managerState {
+            case .missing, .disabled, .disconnected, .invalid:
+                status = .configurationMissing
+            case .connecting, .reasserting, .disconnecting:
+                status = .starting
+            case .connected:
+                status = .readyNoFlow
+            }
         }
     }
 }

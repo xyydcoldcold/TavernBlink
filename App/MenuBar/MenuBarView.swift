@@ -33,6 +33,24 @@ struct MenuBarView: View {
                     .foregroundStyle(.secondary)
             }
 
+            if let diagnostics = model.providerDiagnostics {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Phase 0 flow observations")
+                        .font(.caption.weight(.semibold))
+                    Text("TCP observed: \(diagnostics.observedTCPFlowCount) · target matches: \(diagnostics.matchedTCPFlowCount)")
+                    Text(
+                        "Last source signing ID: \(diagnostics.lastObservedSigningIdentifier ?? "not observed")"
+                    )
+                    .lineLimit(1)
+                    if diagnostics.missingSigningIdentifierCount > 0 {
+                        Text("Flows missing signing ID: \(diagnostics.missingSigningIdentifierCount)")
+                    }
+                }
+                .font(.caption.monospaced())
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+            }
+
             if let error = model.lastError {
                 Text(error)
                     .font(.caption)

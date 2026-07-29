@@ -20,10 +20,24 @@ final class ProviderCommandTests: XCTestCase {
 
     func testResponseCarriesRequestID() {
         let command = ProviderCommand(action: .status)
-        let response = ProviderResponse.status(for: command, activeFlowCount: 3)
+        let diagnostics = ProviderDiagnostics(
+            lifecycleState: .readyFailOpen,
+            expectedSigningIdentifier: "com.blizzard.hearthstone",
+            lastObservedSigningIdentifier: "com.blizzard.hearthstone",
+            observedTCPFlowCount: 8,
+            matchedTCPFlowCount: 3,
+            missingSigningIdentifierCount: 0,
+            identifierLogCapacityReached: false
+        )
+        let response = ProviderResponse.status(
+            for: command,
+            activeFlowCount: 3,
+            diagnostics: diagnostics
+        )
 
         XCTAssertEqual(response.requestID, command.requestID)
         XCTAssertEqual(response.activeFlowCount, 3)
         XCTAssertEqual(response.result, .ok)
+        XCTAssertEqual(response.diagnostics, diagnostics)
     }
 }

@@ -93,6 +93,10 @@ Start with [docs/phase-0-checklist.md](docs/phase-0-checklist.md). The core rout
 is not considered viable until entitlement activation, manager startup, source
 identity, and real-game reconnect behavior all pass on physical Macs.
 
+For a signed archive, `scripts/capture-phase0-evidence.sh` validates the
+effective host/provider entitlements and Universal 2 bundle structure before
+runtime testing begins.
+
 ## Safety and project status
 
 TavernBlink is not affiliated with or endorsed by Blizzard. Disconnecting game

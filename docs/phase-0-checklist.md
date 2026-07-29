@@ -21,6 +21,20 @@ codesign -d --entitlements :- \
   /path/to/TavernBlink.app/Contents/Library/SystemExtensions/TavernBlinkProxy.systemextension
 ```
 
+Or capture and validate the complete snapshot with:
+
+```sh
+scripts/capture-phase0-evidence.sh \
+  /path/to/TavernBlink.app \
+  com.yourcompany.TavernBlink \
+  com.yourcompany.TavernBlink.ProxyExtension \
+  group.com.yourcompany.TavernBlink
+```
+
+The script requires a signed Universal 2 app, verifies the embedded extension
+location and both code signatures, validates the effective entitlement values,
+and writes the evidence under `build/phase0-evidence`.
+
 Gate: both archived products retain the approved
 `app-proxy-provider-systemextension` and App Group values; the host also retains
 the system-extension installation entitlement.

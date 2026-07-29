@@ -18,3 +18,6 @@ ExportOptions.plist
 # macOS
 .DS_Store
 
+# Local implementation reports
+TavernBlink_NETransparentProxyProvider_Implementation_Report_CN.docx
+TavernBlink_NETransparentProxyProvider_Implementation_Report_CN.pdf
