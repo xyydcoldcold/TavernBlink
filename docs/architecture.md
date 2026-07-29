@@ -22,11 +22,11 @@ target signing identity and small diagnostic summaries.
 
 ## Current safety boundary
 
-The provider applies one outbound TCP rule but returns `false` from
-`handleNewFlow` even when the signing identifier matches. Transparent-proxy flow
-copying therefore leaves traffic with the system. This is intentional: the
-provider must not return `true` until the TCP relay owns the flow, has bounded
-backpressure, and can close every terminal path exactly once.
+The provider applies one outbound TCP rule and returns `false` for non-target or
+unidentifiable flows. It claims an exact target-identity match only after a relay
+has been created and registered. The relay permits one in-flight block per
+direction, caps upstream reads at 64 KiB, and converges EOF, errors, provider
+stop, and user disconnect on one idempotent close path.
 
 Missing source signing identity never broadens matching. An audit-token fallback
 may be added only after independent code-signature verification is implemented.

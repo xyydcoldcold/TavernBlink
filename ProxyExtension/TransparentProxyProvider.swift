@@ -58,8 +58,8 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
                 completionHandler(error)
                 return
             }
-            self.setLifecycleState(.readyFailOpen)
-            self.logger.notice("Transparent proxy started in fail-open scaffold mode")
+            self.setLifecycleState(.readyRelaying)
+            self.logger.notice("Transparent proxy started with bounded TCP relay enabled")
             completionHandler(nil)
         }
     }
@@ -76,7 +76,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
     }
 
     override func handleNewFlow(_ flow: NEAppProxyFlow) -> Bool {
-        guard currentLifecycleState == .readyFailOpen,
+        guard currentLifecycleState == .readyRelaying,
               let tcpFlow = flow as? NEAppProxyTCPFlow
         else {
             return false
@@ -100,11 +100,20 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             return false
         }
 
-        // Phase 0 safety boundary: an incomplete relay must never claim a flow.
-        // Enable this path only after TCPFlowRelay passes the bounded-buffer echo
-        // harness and its close paths are integrated with FlowRegistry.
-        matchingLogger.debug("Observed target TCP flow; leaving it to the system")
-        return false
+        do {
+            let relay = try TCPFlowRelay(flow: tcpFlow) { [weak self] relayID in
+                self?.registry.remove(id: relayID)
+            }
+            registry.insert(relay)
+            relay.start()
+            matchingLogger.notice("Claimed target TCP flow \(relay.id.uuidString, privacy: .public)")
+            return true
+        } catch {
+            matchingLogger.error(
+                "Unable to create target TCP relay; leaving flow to the system: \(error.localizedDescription, privacy: .public)"
+            )
+            return false
+        }
     }
 
     override func handleAppMessage(

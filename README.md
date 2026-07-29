@@ -4,7 +4,7 @@ TavernBlink is an experimental macOS 13+ menu-bar app that explores using an
 `NETransparentProxyProvider` Network System Extension to identify and close
 Hearthstone TCP flows on an explicit user command.
 
-This repository currently contains the Phase 0/Phase 1 engineering skeleton
+This repository currently contains the Phase 0/Phase 1 engineering core
 described in the implementation report:
 
 - one Xcode project;
@@ -13,15 +13,16 @@ described in the implementation report:
 - shared, versioned provider messaging models;
 - system-extension, proxy-manager, messaging, and signing-identity service
   boundaries;
-- a fail-open provider shell and an intentionally disabled TCP relay;
-- unit-test and relay-harness starting points;
+- an exact-identity provider with a bounded, bidirectional TCP relay;
+- unit tests and a local relay harness;
 - signing, notarization, and release-verification scripts;
 - Phase 0 acceptance and manual-test documents.
 
-The provider currently returns `false` for every flow. It can observe an exact
-target signing-identifier match, but it does **not** claim or relay traffic until
-the bounded relay is implemented and tested. This keeps the initial skeleton
-fail-open.
+The provider returns `false` for non-target or unidentifiable flows. Exact
+target-signing-identifier matches are relayed through one bounded in-flight
+block per direction and can be closed through versioned provider messaging.
+Signed physical-Mac and real-game testing are still required before the route
+can pass Phase 0.
 
 ## Requirements
 

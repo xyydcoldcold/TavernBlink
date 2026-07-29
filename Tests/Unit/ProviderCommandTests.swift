@@ -21,7 +21,7 @@ final class ProviderCommandTests: XCTestCase {
     func testResponseCarriesRequestID() {
         let command = ProviderCommand(action: .status)
         let diagnostics = ProviderDiagnostics(
-            lifecycleState: .readyFailOpen,
+            lifecycleState: .readyRelaying,
             expectedSigningIdentifier: "com.blizzard.hearthstone",
             lastObservedSigningIdentifier: "com.blizzard.hearthstone",
             observedTCPFlowCount: 8,

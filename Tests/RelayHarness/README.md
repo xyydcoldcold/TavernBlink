@@ -1,7 +1,6 @@
 # Relay harness
 
-This directory is reserved for the Phase 3 local TCP relay harness. The harness
-must be runnable without Hearthstone and cover:
+The XCTest relay harness is runnable without Hearthstone and covers:
 
 - 1–256 byte bidirectional messages;
 - a continuous 500 MB transfer;
@@ -12,5 +11,14 @@ must be runnable without Hearthstone and cover:
 - repeated close requests;
 - bounded memory with one in-flight block per direction.
 
-Do not connect `TCPFlowRelay` from `handleNewFlow` until this matrix passes and
-all terminal paths converge on one idempotent close operation.
+Run the complete harness with:
+
+```sh
+xcodebuild \
+  -project TavernBlink.xcodeproj \
+  -scheme TavernBlink \
+  -configuration Debug \
+  -derivedDataPath /tmp/TavernBlinkDerivedData \
+  CODE_SIGNING_ALLOWED=NO \
+  test
+```

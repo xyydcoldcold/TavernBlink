@@ -4,6 +4,7 @@ struct ProviderDiagnostics: Codable, Equatable {
     enum LifecycleState: String, Codable {
         case starting
         case readyFailOpen
+        case readyRelaying
         case stopping
         case stopped
     }

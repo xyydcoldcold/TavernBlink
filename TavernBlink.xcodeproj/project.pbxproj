@@ -39,6 +39,7 @@
 		B00200000000000000000011 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
 		B00200000000000000000012 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* Network.framework */; };
 		B00200000000000000000013 /* FlowObservationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000008 /* FlowObservationStore.swift */; };
+		B00200000000000000000014 /* RelayIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000009 /* RelayIO.swift */; };
 
 		B00300000000000000000001 /* ProviderCommandTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000001 /* ProviderCommandTests.swift */; };
 		B00300000000000000000002 /* FlowMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000002 /* FlowMatcherTests.swift */; };
@@ -50,6 +51,12 @@
 		B00300000000000000000008 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
 		B00300000000000000000009 /* FlowObservationStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000006 /* FlowObservationStoreTests.swift */; };
 		B00300000000000000000010 /* FlowObservationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000008 /* FlowObservationStore.swift */; };
+		B00300000000000000000011 /* TCPFlowRelayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000007 /* TCPFlowRelayTests.swift */; };
+		B00300000000000000000012 /* RelayIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000009 /* RelayIO.swift */; };
+		B00300000000000000000013 /* FlowRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000004 /* FlowRegistry.swift */; };
+		B00300000000000000000014 /* TCPFlowRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000005 /* TCPFlowRelay.swift */; };
+		B00300000000000000000015 /* EchoServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000003 /* EchoServer.swift */; };
+		B00300000000000000000016 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* Network.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +114,7 @@
 		P00100000000000000000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		P00100000000000000000007 /* ProxyExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProxyExtension.entitlements; sourceTree = "<group>"; };
 		P00100000000000000000008 /* FlowObservationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowObservationStore.swift; sourceTree = "<group>"; };
+		P00100000000000000000009 /* RelayIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayIO.swift; sourceTree = "<group>"; };
 
 		T00100000000000000000001 /* ProviderCommandTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderCommandTests.swift; sourceTree = "<group>"; };
 		T00100000000000000000002 /* FlowMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowMatcherTests.swift; sourceTree = "<group>"; };
@@ -114,6 +122,7 @@
 		T00100000000000000000004 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		T00100000000000000000005 /* phase-0-results.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "phase-0-results.csv"; sourceTree = "<group>"; };
 		T00100000000000000000006 /* FlowObservationStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowObservationStoreTests.swift; sourceTree = "<group>"; };
+		T00100000000000000000007 /* TCPFlowRelayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPFlowRelayTests.swift; sourceTree = "<group>"; };
 
 		F00100000000000000000001 /* SystemExtensions.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemExtensions.framework; path = System/Library/Frameworks/SystemExtensions.framework; sourceTree = SDKROOT; };
 		F00100000000000000000002 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
@@ -155,6 +164,7 @@
 			files = (
 				B00300000000000000000007 /* XCTest.framework in Frameworks */,
 				B00300000000000000000008 /* NetworkExtension.framework in Frameworks */,
+				B00300000000000000000016 /* Network.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +277,7 @@
 				P00100000000000000000002 /* TransparentProxyProvider.swift */,
 				P00100000000000000000003 /* FlowMatcher.swift */,
 				P00100000000000000000008 /* FlowObservationStore.swift */,
+				P00100000000000000000009 /* RelayIO.swift */,
 				P00100000000000000000004 /* FlowRegistry.swift */,
 				P00100000000000000000005 /* TCPFlowRelay.swift */,
 				P00100000000000000000006 /* Info.plist */,
@@ -291,6 +302,7 @@
 				T00100000000000000000001 /* ProviderCommandTests.swift */,
 				T00100000000000000000002 /* FlowMatcherTests.swift */,
 				T00100000000000000000006 /* FlowObservationStoreTests.swift */,
+				T00100000000000000000007 /* TCPFlowRelayTests.swift */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -458,6 +470,7 @@
 				B00200000000000000000002 /* TransparentProxyProvider.swift in Sources */,
 				B00200000000000000000003 /* FlowMatcher.swift in Sources */,
 				B00200000000000000000013 /* FlowObservationStore.swift in Sources */,
+				B00200000000000000000014 /* RelayIO.swift in Sources */,
 				B00200000000000000000004 /* FlowRegistry.swift in Sources */,
 				B00200000000000000000005 /* TCPFlowRelay.swift in Sources */,
 				B00200000000000000000006 /* ProviderCommand.swift in Sources */,
@@ -475,11 +488,16 @@
 				B00300000000000000000001 /* ProviderCommandTests.swift in Sources */,
 				B00300000000000000000002 /* FlowMatcherTests.swift in Sources */,
 				B00300000000000000000009 /* FlowObservationStoreTests.swift in Sources */,
+				B00300000000000000000011 /* TCPFlowRelayTests.swift in Sources */,
 				B00300000000000000000003 /* ProviderCommand.swift in Sources */,
 				B00300000000000000000004 /* ProviderResponse.swift in Sources */,
 				B00300000000000000000005 /* TargetAppIdentity.swift in Sources */,
 				B00300000000000000000006 /* FlowMatcher.swift in Sources */,
 				B00300000000000000000010 /* FlowObservationStore.swift in Sources */,
+				B00300000000000000000012 /* RelayIO.swift in Sources */,
+				B00300000000000000000013 /* FlowRegistry.swift in Sources */,
+				B00300000000000000000014 /* TCPFlowRelay.swift in Sources */,
+				B00300000000000000000015 /* EchoServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
