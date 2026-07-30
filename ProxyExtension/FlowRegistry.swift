@@ -20,18 +20,49 @@ enum RelayCloseReason: String {
 }
 
 final class FlowRegistry {
+    struct DisconnectResult: Equatable {
+        let closedCount: Int
+        let remotePort: UInt16?
+    }
+
+    private struct Entry {
+        let relay: RelayControlling
+        let remotePort: UInt16?
+        let insertionOrder: UInt64
+        var isRelaying: Bool
+    }
+
+    private static let preferredGameplayPort: UInt16 = 3724
+
     private let queue = DispatchQueue(label: "dev.tavernblink.flow-registry")
-    private var relays: [UUID: RelayControlling] = [:]
+    private var relays: [UUID: Entry] = [:]
+    private var nextInsertionOrder: UInt64 = 0
 
     var activeCount: Int {
         queue.sync {
-            relays.count
+            relays.values.filter(\.isRelaying).count
         }
     }
 
-    func insert(_ relay: RelayControlling) {
+    func insert(
+        _ relay: RelayControlling,
+        remotePort: UInt16? = nil,
+        isRelaying: Bool = true
+    ) {
         queue.sync {
-            relays[relay.id] = relay
+            relays[relay.id] = Entry(
+                relay: relay,
+                remotePort: remotePort,
+                insertionOrder: nextInsertionOrder,
+                isRelaying: isRelaying
+            )
+            nextInsertionOrder &+= 1
+        }
+    }
+
+    func markRelaying(id: UUID) {
+        queue.sync {
+            relays[id]?.isRelaying = true
         }
     }
 
@@ -46,7 +77,7 @@ final class FlowRegistry {
         completion: @escaping (Int) -> Void
     ) {
         let snapshot: [RelayControlling] = queue.sync {
-            let snapshot = Array(relays.values)
+            let snapshot = relays.values.map(\.relay)
             relays.removeAll()
             return snapshot
         }
@@ -66,5 +97,44 @@ final class FlowRegistry {
         group.notify(queue: .global(qos: .userInitiated)) {
             completion(snapshot.count)
         }
+    }
+
+    func disconnectPreferred(
+        reason: RelayCloseReason,
+        completion: @escaping (DisconnectResult) -> Void
+    ) {
+        let selected: Entry? = queue.sync {
+            guard let candidate = relays.values
+                .filter(\.isRelaying)
+                .min(by: Self.isPreferredBefore)
+            else {
+                return nil
+            }
+            relays.removeValue(forKey: candidate.relay.id)
+            return candidate
+        }
+
+        guard let selected else {
+            completion(DisconnectResult(closedCount: 0, remotePort: nil))
+            return
+        }
+
+        selected.relay.close(reason: reason) {
+            completion(
+                DisconnectResult(
+                    closedCount: 1,
+                    remotePort: selected.remotePort
+                )
+            )
+        }
+    }
+
+    private static func isPreferredBefore(_ lhs: Entry, _ rhs: Entry) -> Bool {
+        let lhsIsPreferred = lhs.remotePort == preferredGameplayPort
+        let rhsIsPreferred = rhs.remotePort == preferredGameplayPort
+        if lhsIsPreferred != rhsIsPreferred {
+            return lhsIsPreferred
+        }
+        return lhs.insertionOrder < rhs.insertionOrder
     }
 }

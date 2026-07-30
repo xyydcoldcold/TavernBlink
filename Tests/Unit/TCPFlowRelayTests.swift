@@ -278,6 +278,102 @@ final class TCPFlowRelayTests: XCTestCase {
         XCTAssertEqual(retained.closeReasons, [.providerStopped])
     }
 
+    func testFlowRegistryDisconnectPreferredClosesOnlyGameplayPort() {
+        let registry = FlowRegistry()
+        let oldestWebFlow = StubRelay()
+        let gameplayFlow = StubRelay()
+        let newestWebFlow = StubRelay()
+        registry.insert(oldestWebFlow, remotePort: 443)
+        registry.insert(gameplayFlow, remotePort: 3724)
+        registry.insert(newestWebFlow, remotePort: 443)
+
+        let disconnected = expectation(description: "preferred flow disconnected")
+        registry.disconnectPreferred(reason: .userRequested) { result in
+            XCTAssertEqual(
+                result,
+                FlowRegistry.DisconnectResult(
+                    closedCount: 1,
+                    remotePort: 3724
+                )
+            )
+            disconnected.fulfill()
+        }
+        wait(for: [disconnected], timeout: 2)
+
+        XCTAssertEqual(gameplayFlow.closeReasons, [.userRequested])
+        XCTAssertTrue(oldestWebFlow.closeReasons.isEmpty)
+        XCTAssertTrue(newestWebFlow.closeReasons.isEmpty)
+        XCTAssertEqual(registry.activeCount, 2)
+    }
+
+    func testFlowRegistryDisconnectPreferredFallsBackToOldestFlow() {
+        let registry = FlowRegistry()
+        let oldestFlow = StubRelay()
+        let newestFlow = StubRelay()
+        registry.insert(oldestFlow, remotePort: 443)
+        registry.insert(newestFlow, remotePort: 1119)
+
+        let disconnected = expectation(description: "fallback flow disconnected")
+        registry.disconnectPreferred(reason: .userRequested) { result in
+            XCTAssertEqual(result.closedCount, 1)
+            XCTAssertEqual(result.remotePort, 443)
+            disconnected.fulfill()
+        }
+        wait(for: [disconnected], timeout: 2)
+
+        XCTAssertEqual(oldestFlow.closeReasons, [.userRequested])
+        XCTAssertTrue(newestFlow.closeReasons.isEmpty)
+        XCTAssertEqual(registry.activeCount, 1)
+    }
+
+    func testFlowRegistryDisconnectPreferredHandlesEmptyRegistry() {
+        let registry = FlowRegistry()
+        let disconnected = expectation(description: "empty disconnect completed")
+
+        registry.disconnectPreferred(reason: .userRequested) { result in
+            XCTAssertEqual(
+                result,
+                FlowRegistry.DisconnectResult(
+                    closedCount: 0,
+                    remotePort: nil
+                )
+            )
+            disconnected.fulfill()
+        }
+        wait(for: [disconnected], timeout: 2)
+    }
+
+    func testFlowRegistryDisconnectPreferredIgnoresFlowUntilRelaying() {
+        let registry = FlowRegistry()
+        let connectingGameplayFlow = StubRelay()
+        registry.insert(
+            connectingGameplayFlow,
+            remotePort: 3724,
+            isRelaying: false
+        )
+
+        let ignored = expectation(description: "connecting flow ignored")
+        registry.disconnectPreferred(reason: .userRequested) { result in
+            XCTAssertEqual(result.closedCount, 0)
+            ignored.fulfill()
+        }
+        wait(for: [ignored], timeout: 2)
+        XCTAssertTrue(connectingGameplayFlow.closeReasons.isEmpty)
+        XCTAssertEqual(registry.activeCount, 0)
+
+        registry.markRelaying(id: connectingGameplayFlow.id)
+        XCTAssertEqual(registry.activeCount, 1)
+
+        let disconnected = expectation(description: "relaying flow disconnected")
+        registry.disconnectPreferred(reason: .userRequested) { result in
+            XCTAssertEqual(result.closedCount, 1)
+            XCTAssertEqual(result.remotePort, 3724)
+            disconnected.fulfill()
+        }
+        wait(for: [disconnected], timeout: 2)
+        XCTAssertEqual(connectingGameplayFlow.closeReasons, [.userRequested])
+    }
+
     private func assertEchoed(
         byteCount: Int,
         responseDelay: TimeInterval = 0,

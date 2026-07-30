@@ -616,7 +616,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -635,7 +635,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -654,7 +654,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				EXECUTABLE_NAME = TavernBlinkProxy;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ProxyExtension/Info.plist;
@@ -676,7 +676,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				EXECUTABLE_NAME = TavernBlinkProxy;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ProxyExtension/Info.plist;

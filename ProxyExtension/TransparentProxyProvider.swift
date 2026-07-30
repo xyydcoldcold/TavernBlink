@@ -102,12 +102,30 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         }
 
         do {
-            let relay = try TCPFlowRelay(flow: tcpFlow) { [weak self] relayID in
-                self?.registry.remove(id: relayID)
-            }
-            registry.insert(relay)
+            let relay = try TCPFlowRelay(
+                flow: tcpFlow,
+                onRelaying: { [weak self] relayID in
+                    self?.registry.markRelaying(id: relayID)
+                },
+                onClose: { [weak self] relayID in
+                    self?.registry.remove(id: relayID)
+                }
+            )
+            registry.insert(
+                relay,
+                remotePort: relay.remotePort,
+                isRelaying: false
+            )
             relay.start()
-            matchingLogger.notice("Claimed target TCP flow \(relay.id.uuidString, privacy: .public)")
+            if let remotePort = relay.remotePort {
+                matchingLogger.notice(
+                    "Claimed target TCP flow \(relay.id.uuidString, privacy: .public), remote port \(remotePort)"
+                )
+            } else {
+                matchingLogger.notice(
+                    "Claimed target TCP flow \(relay.id.uuidString, privacy: .public), remote port unavailable"
+                )
+            }
             return true
         } catch {
             matchingLogger.error(
@@ -205,17 +223,23 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
 
         case .disconnectNow:
             let start = ContinuousClock.now
-            registry.disconnectAll(reason: .userRequested) { [self] closedCount in
+            registry.disconnectPreferred(reason: .userRequested) { [self] result in
                 let duration = start.duration(to: .now)
                 let milliseconds = Int(duration.components.seconds * 1_000)
                     + Int(duration.components.attoseconds / 1_000_000_000_000_000)
-                self.disconnectLogger.notice(
-                    "Disconnect request completed \(closedCount) flow close(s) in \(milliseconds) ms"
-                )
+                if let remotePort = result.remotePort {
+                    self.disconnectLogger.notice(
+                        "Disconnect request completed \(result.closedCount) flow close(s) in \(milliseconds) ms; selected remote port \(remotePort)"
+                    )
+                } else {
+                    self.disconnectLogger.notice(
+                        "Disconnect request completed \(result.closedCount) flow close(s) in \(milliseconds) ms; selected remote port unavailable"
+                    )
+                }
                 self.finishResponse(
                     self.providerResponse(
                         for: command,
-                        closedFlowCount: closedCount,
+                        closedFlowCount: result.closedCount,
                         durationMilliseconds: milliseconds
                     )
                 )

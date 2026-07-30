@@ -16,6 +16,7 @@ final class TCPFlowRelay: RelayControlling {
     static let maximumChunkSize = 65_536
 
     let id = UUID()
+    let remotePort: UInt16?
 
     var currentState: State {
         queue.sync {
@@ -29,6 +30,7 @@ final class TCPFlowRelay: RelayControlling {
     private let connectionTimeout: TimeInterval
     private var state: State = .created
     private var timeoutWorkItem: DispatchWorkItem?
+    private var onRelaying: ((UUID) -> Void)?
     private var onClose: ((UUID) -> Void)?
     private var closeCompletions: [() -> Void] = []
     private var clientReadFinished = false
@@ -43,6 +45,7 @@ final class TCPFlowRelay: RelayControlling {
     convenience init(
         flow: NEAppProxyTCPFlow,
         connectionTimeout: TimeInterval = 30,
+        onRelaying: ((UUID) -> Void)? = nil,
         onClose: @escaping (UUID) -> Void
     ) throws {
         let flowIO = try AppProxyTCPFlowIO(flow: flow)
@@ -55,7 +58,9 @@ final class TCPFlowRelay: RelayControlling {
         self.init(
             flow: flowIO,
             connection: connection,
+            remotePort: Self.remotePort(from: flowIO.remoteEndpoint),
             connectionTimeout: connectionTimeout,
+            onRelaying: onRelaying,
             onClose: onClose
         )
     }
@@ -63,17 +68,30 @@ final class TCPFlowRelay: RelayControlling {
     init(
         flow: RelayFlowIO,
         connection: RelayConnectionIO,
+        remotePort: UInt16? = nil,
         connectionTimeout: TimeInterval = 30,
         queue: DispatchQueue? = nil,
+        onRelaying: ((UUID) -> Void)? = nil,
         onClose: @escaping (UUID) -> Void
     ) {
         self.flow = flow
         self.connection = connection
+        self.remotePort = remotePort
         self.connectionTimeout = connectionTimeout
         self.queue = queue ?? DispatchQueue(
             label: "dev.tavernblink.tcp-flow-relay.\(id.uuidString)"
         )
+        self.onRelaying = onRelaying
         self.onClose = onClose
+    }
+
+    private static func remotePort(
+        from endpoint: Network.NWEndpoint
+    ) -> UInt16? {
+        guard case let .hostPort(_, port) = endpoint else {
+            return nil
+        }
+        return port.rawValue
     }
 
     func start() {
@@ -167,6 +185,9 @@ final class TCPFlowRelay: RelayControlling {
         }
 
         state = .relaying
+        let callback = onRelaying
+        onRelaying = nil
+        callback?(id)
         logger.notice("Relay \(self.id.uuidString, privacy: .public) entered relaying state")
         readFromClient()
         readFromUpstream()
@@ -340,6 +361,7 @@ final class TCPFlowRelay: RelayControlling {
             )
         }
         let callback = onClose
+        onRelaying = nil
         onClose = nil
         callback?(id)
 
