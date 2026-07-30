@@ -633,7 +633,9 @@
 		Q00200000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -645,6 +647,7 @@
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_HOST_BUNDLE_ID)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(TAVERNBLINK_HOST_DEVELOPER_ID_PROFILE)";
 				SKIP_INSTALL = NO;
 			};
 			name = Release;
@@ -675,7 +678,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 6;
 				EXECUTABLE_NAME = TavernBlinkProxy;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -689,6 +694,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(TAVERNBLINK_PROXY_BUNDLE_ID)";
 				PRODUCT_MODULE_NAME = TavernBlinkProxy;
 				PRODUCT_NAME = "$(TAVERNBLINK_PROXY_BUNDLE_ID)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(TAVERNBLINK_PROXY_DEVELOPER_ID_PROFILE)";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

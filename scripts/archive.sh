@@ -5,12 +5,16 @@ PROJECT_PATH="${PROJECT_PATH:-TavernBlink.xcodeproj}"
 SCHEME="${SCHEME:-TavernBlink}"
 CONFIGURATION="${CONFIGURATION:-Release}"
 ARCHIVE_PATH="${ARCHIVE_PATH:-build/TavernBlink.xcarchive}"
+ARCHIVE_ARCHS="${ARCHIVE_ARCHS:-arm64 x86_64}"
 
 xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME" \
   -configuration "$CONFIGURATION" \
+  -destination "generic/platform=macOS" \
   -archivePath "$ARCHIVE_PATH" \
+  ARCHS="$ARCHIVE_ARCHS" \
+  ONLY_ACTIVE_ARCH=NO \
   archive
 
 APP_PATH="$ARCHIVE_PATH/Products/Applications/TavernBlink.app"
