@@ -4,7 +4,6 @@ TavernBlink is an experimental macOS 13+ menu-bar app that uses a Network
 System Extension to identify Hearthstone TCP flows and close the currently
 matched flows when the user clicks **Disconnect Now**.
 
-，
 
 ## Download and install
 
