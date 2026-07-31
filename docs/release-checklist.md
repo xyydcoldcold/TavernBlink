@@ -1,14 +1,15 @@
 # Release checklist
 
-- [ ] Phase 0 has a written Go decision.
+- [x] Phase 0 has a written Go decision.
 - [ ] Unit tests and the full relay harness pass.
 - [ ] Physical-Mac network and game matrices pass.
-- [ ] Host app and system extension are Universal 2.
-- [ ] Archive contains the extension under
+- [x] Host app and system extension are Universal 2.
+- [x] Archive contains the extension under
       `Contents/Library/SystemExtensions`.
-- [ ] Actual entitlements match approved profiles.
-- [ ] DMG is signed, notarized, and stapled.
-- [ ] `codesign`, `stapler`, and `spctl` verification pass.
+- [x] Actual entitlements match approved profiles.
+- [x] A signed DMG contains TavernBlink.app and an Applications shortcut.
+- [x] DMG is signed, notarized, and stapled.
+- [x] `codesign`, `stapler`, and `spctl` verification pass.
 - [ ] SHA-256 checksum is published.
 - [ ] A second physical Mac completes install, approvals, disconnect, disable,
       and uninstall.
