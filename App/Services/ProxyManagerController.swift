@@ -21,6 +21,9 @@ final class ProxyManagerController {
         case invalidSession
         case startTimedOut
         case duplicateConfigurations(Int)
+        case activeFlowsPreventDisable(Int)
+        case disablePreflightRejected(String)
+        case providerBusy
 
         var errorDescription: String? {
             switch self {
@@ -32,8 +35,20 @@ final class ProxyManagerController {
                 return "The transparent proxy did not reach the connected state in time."
             case let .duplicateConfigurations(count):
                 return "Found \(count) TavernBlink proxy configurations. Remove duplicates before continuing."
+            case let .activeFlowsPreventDisable(count):
+                return "Disable was blocked because \(count) target flow\(count == 1 ? " is" : "s are") still active. TavernBlink left the proxy running so the game connection was not interrupted. Exit Hearthstone or wait for the connection to close, then try Disable again."
+            case let .disablePreflightRejected(summary):
+                return "TavernBlink could not safely verify that all target flows had closed, so the proxy was left enabled. \(summary)"
+            case .providerBusy:
+                return "The transparent proxy is changing state. Wait for it to settle before disabling it."
             }
         }
+    }
+
+    enum DisablePreflightDecision: Equatable {
+        case proceed
+        case activeFlows(Int)
+        case rejected(String)
     }
 
     var onStateChange: ((State) -> Void)?
@@ -248,6 +263,62 @@ final class ProxyManagerController {
         if startCompletion != nil {
             finishStart(.failure(ControllerError.noManager))
         }
+
+        switch manager.connection.status {
+        case .connected:
+            send(ProviderCommand(action: .prepareToDisable)) { [weak self] result in
+                guard let self else {
+                    return
+                }
+                switch result {
+                case let .failure(error):
+                    completion(.failure(
+                        ControllerError.disablePreflightRejected(
+                            error.localizedDescription
+                        )
+                    ))
+                case let .success(response):
+                    switch Self.disablePreflightDecision(for: response) {
+                    case .proceed:
+                        self.stopAndDisable(manager, completion: completion)
+                    case let .activeFlows(count):
+                        completion(.failure(
+                            ControllerError.activeFlowsPreventDisable(count)
+                        ))
+                    case let .rejected(summary):
+                        completion(.failure(
+                            ControllerError.disablePreflightRejected(summary)
+                        ))
+                    }
+                }
+            }
+        case .disconnected, .invalid:
+            stopAndDisable(manager, completion: completion)
+        case .connecting, .reasserting, .disconnecting:
+            completion(.failure(ControllerError.providerBusy))
+        @unknown default:
+            completion(.failure(ControllerError.providerBusy))
+        }
+    }
+
+    static func disablePreflightDecision(
+        for response: ProviderResponse
+    ) -> DisablePreflightDecision {
+        if response.result == .ok {
+            return .proceed
+        }
+        if response.errorCode == "activeFlowsPreventDisable" {
+            return .activeFlows(response.activeFlowCount)
+        }
+        return .rejected(
+            response.errorSummary ?? "The provider rejected disable preparation."
+        )
+    }
+
+    private func stopAndDisable(
+        _ manager: NETransparentProxyManager,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         manager.connection.stopVPNTunnel()
         manager.isEnabled = false
         manager.saveToPreferences { error in

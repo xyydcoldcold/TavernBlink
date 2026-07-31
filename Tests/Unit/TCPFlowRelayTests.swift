@@ -374,6 +374,32 @@ final class TCPFlowRelayTests: XCTestCase {
         XCTAssertEqual(connectingGameplayFlow.closeReasons, [.userRequested])
     }
 
+    func testFlowRegistryRejectsDisablePreparationWhileRelayIsRegistered() {
+        let registry = FlowRegistry()
+        let existing = StubRelay()
+        let later = StubRelay()
+        registry.insert(existing, isRelaying: false)
+
+        XCTAssertEqual(registry.prepareForDisable(), 1)
+        XCTAssertTrue(registry.insertIfAccepting(later))
+        XCTAssertTrue(existing.closeReasons.isEmpty)
+        XCTAssertTrue(later.closeReasons.isEmpty)
+    }
+
+    func testFlowRegistryPausesAdmissionsWhenDisablePreparationIsSafe() {
+        let registry = FlowRegistry()
+        let rejected = StubRelay()
+        let resumed = StubRelay()
+
+        XCTAssertEqual(registry.prepareForDisable(), 0)
+        XCTAssertFalse(registry.insertIfAccepting(rejected))
+        XCTAssertEqual(registry.activeCount, 0)
+
+        registry.resumeAcceptingFlows()
+        XCTAssertTrue(registry.insertIfAccepting(resumed))
+        XCTAssertEqual(registry.activeCount, 1)
+    }
+
     private func assertEchoed(
         byteCount: Int,
         responseDelay: TimeInterval = 0,

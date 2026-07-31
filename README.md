@@ -4,17 +4,7 @@ TavernBlink is an experimental macOS 13+ menu-bar app that uses a Network
 System Extension to identify Hearthstone TCP flows and close the currently
 matched flows when the user clicks **Disconnect Now**.
 
-> [!WARNING]
-> TavernBlink is unofficial and is not affiliated with or endorsed by Blizzard.
-> Forcing a game-session disconnect may violate Blizzard rules and may put an
-> account at risk. TavernBlink is not claimed to be undetectable or ban-safe.
-
-## User requirements
-
-- macOS 13 or newer
-- Apple silicon or Intel Mac (the release is Universal 2)
-- Hearthstone installed through Battle.net
-- An administrator account for the first-time Network Extension approval
+，
 
 ## Download and install
 
@@ -92,9 +82,12 @@ normally.
   one target flow is active.
 - Click **Refresh** after approving an extension or changing game state if the
   displayed status has not updated.
-- To stop the network configuration, click **Disable**. Quitting TavernBlink
-  closes only its menu-bar UI, so use **Disable** first when you want the proxy
-  turned off.
+- A **Disable** request is intentionally blocked while target flows are active,
+  because macOS cannot hand an already claimed TCP connection back to the
+  system without interrupting it. Exit Hearthstone or wait for the target flows
+  to close before disabling the proxy.
+- Quitting TavernBlink closes only its menu-bar UI. Once no target flows are
+  active, use **Disable** first when you want the proxy turned off.
 
 ## Uninstall
 

@@ -24,7 +24,7 @@
 		B00100000000000000000015 /* SystemExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000001 /* SystemExtensions.framework */; };
 		B00100000000000000000016 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
 		B00100000000000000000017 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* Security.framework */; };
-		B00100000000000000000018 /* TavernBlinkProxy.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = D00100000000000000000002 /* TavernBlinkProxy.systemextension */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B00100000000000000000018 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B00200000000000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000001 /* main.swift */; };
 		B00200000000000000000002 /* TransparentProxyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000002 /* TransparentProxyProvider.swift */; };
 		B00200000000000000000003 /* FlowMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000003 /* FlowMatcher.swift */; };
@@ -81,7 +81,7 @@
 			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
-				B00100000000000000000018 /* TavernBlinkProxy.systemextension in Embed System Extensions */,
+				B00100000000000000000018 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension in Embed System Extensions */,
 			);
 			name = "Embed System Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,7 +101,7 @@
 		A00100000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00100000000000000000011 /* TavernBlink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TavernBlink.entitlements; sourceTree = "<group>"; };
 		D00100000000000000000001 /* TavernBlink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavernBlink.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D00100000000000000000002 /* TavernBlinkProxy.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = "$(TAVERNBLINK_PROXY_BUNDLE_ID).systemextension"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000003 /* TavernBlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TavernBlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F00100000000000000000001 /* SystemExtensions.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemExtensions.framework; path = System/Library/Frameworks/SystemExtensions.framework; sourceTree = SDKROOT; };
 		F00100000000000000000002 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
@@ -192,7 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				D00100000000000000000001 /* TavernBlink.app */,
-				D00100000000000000000002 /* TavernBlinkProxy.systemextension */,
+				D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */,
 				D00100000000000000000003 /* TavernBlinkTests.xctest */,
 			);
 			name = Products;
@@ -399,7 +399,7 @@
 			);
 			name = TavernBlinkProxy;
 			productName = TavernBlinkProxy;
-			productReference = D00100000000000000000002 /* TavernBlinkProxy.systemextension */;
+			productReference = D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */;
 			productType = "com.apple.product-type.system-extension";
 		};
 		E00100000000000000000004 /* TavernBlinkTests */ = {
@@ -616,7 +616,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -633,11 +633,11 @@
 		Q00200000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -657,7 +657,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				EXECUTABLE_NAME = TavernBlinkProxy;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ProxyExtension/Info.plist;
@@ -678,10 +678,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_ENTITLEMENTS = ProxyExtension/ProxyExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				EXECUTABLE_NAME = TavernBlinkProxy;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ProxyExtension/Info.plist;

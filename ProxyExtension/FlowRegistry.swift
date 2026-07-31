@@ -37,10 +37,30 @@ final class FlowRegistry {
     private let queue = DispatchQueue(label: "dev.tavernblink.flow-registry")
     private var relays: [UUID: Entry] = [:]
     private var nextInsertionOrder: UInt64 = 0
+    private var isAcceptingNewFlows = true
 
     var activeCount: Int {
         queue.sync {
             relays.values.filter(\.isRelaying).count
+        }
+    }
+
+    @discardableResult
+    func insertIfAccepting(
+        _ relay: RelayControlling,
+        remotePort: UInt16? = nil,
+        isRelaying: Bool = true
+    ) -> Bool {
+        queue.sync {
+            guard isAcceptingNewFlows else {
+                return false
+            }
+            insertLocked(
+                relay,
+                remotePort: remotePort,
+                isRelaying: isRelaying
+            )
+            return true
         }
     }
 
@@ -50,13 +70,31 @@ final class FlowRegistry {
         isRelaying: Bool = true
     ) {
         queue.sync {
-            relays[relay.id] = Entry(
-                relay: relay,
+            insertLocked(
+                relay,
                 remotePort: remotePort,
-                insertionOrder: nextInsertionOrder,
                 isRelaying: isRelaying
             )
-            nextInsertionOrder &+= 1
+        }
+    }
+
+    /// Atomically blocks future admissions only when no relay is registered.
+    ///
+    /// Returning a nonzero count leaves admission enabled, so a rejected
+    /// disable attempt does not change the running game session.
+    func prepareForDisable() -> Int {
+        queue.sync {
+            guard relays.isEmpty else {
+                return relays.count
+            }
+            isAcceptingNewFlows = false
+            return 0
+        }
+    }
+
+    func resumeAcceptingFlows() {
+        queue.sync {
+            isAcceptingNewFlows = true
         }
     }
 
@@ -136,5 +174,19 @@ final class FlowRegistry {
             return lhsIsPreferred
         }
         return lhs.insertionOrder < rhs.insertionOrder
+    }
+
+    private func insertLocked(
+        _ relay: RelayControlling,
+        remotePort: UInt16?,
+        isRelaying: Bool
+    ) {
+        relays[relay.id] = Entry(
+            relay: relay,
+            remotePort: remotePort,
+            insertionOrder: nextInsertionOrder,
+            isRelaying: isRelaying
+        )
+        nextInsertionOrder &+= 1
     }
 }

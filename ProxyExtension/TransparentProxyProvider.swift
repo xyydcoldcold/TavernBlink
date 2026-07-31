@@ -32,6 +32,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         completionHandler: @escaping (Error?) -> Void
     ) {
         setLifecycleState(.starting)
+        registry.resumeAcceptingFlows()
         let targetIdentity = sharedConfiguration.targetIdentity
         matcher.updateTargetIdentity(targetIdentity)
         observations.reset(expectedSigningIdentifier: targetIdentity?.signingIdentifier)
@@ -111,11 +112,16 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
                     self?.registry.remove(id: relayID)
                 }
             )
-            registry.insert(
+            guard registry.insertIfAccepting(
                 relay,
                 remotePort: relay.remotePort,
                 isRelaying: false
-            )
+            ) else {
+                matchingLogger.info(
+                    "Left target TCP flow to the system while disable preparation was in progress"
+                )
+                return false
+            }
             relay.start()
             if let remotePort = relay.remotePort {
                 matchingLogger.notice(
@@ -203,6 +209,26 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         case .status, .exportDiagnostics:
             finishResponse(providerResponse(for: command))
 
+        case .prepareToDisable:
+            let registeredFlowCount = registry.prepareForDisable()
+            guard registeredFlowCount == 0 else {
+                messagingLogger.notice(
+                    "Rejected disable preparation while \(registeredFlowCount) target relay(s) remain registered"
+                )
+                finishResponse(providerResponse(
+                    for: command,
+                    result: .notReady,
+                    activeFlowCount: registeredFlowCount,
+                    errorCode: "activeFlowsPreventDisable",
+                    errorSummary: "Target flows are still active; the proxy was left running."
+                ))
+                return
+            }
+            messagingLogger.notice(
+                "Disable preparation succeeded; new target flow admission is paused"
+            )
+            finishResponse(providerResponse(for: command))
+
         case .updateTargetIdentity:
             guard let identity = command.targetIdentity else {
                 finishResponse(providerResponse(
@@ -215,6 +241,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             }
             sharedConfiguration.targetIdentity = identity
             matcher.updateTargetIdentity(identity)
+            registry.resumeAcceptingFlows()
             observations.reset(expectedSigningIdentifier: identity.signingIdentifier)
             matchingLogger.notice(
                 "Updated expected signing identifier to \(identity.signingIdentifier, privacy: .public) and reset flow observations"
@@ -266,6 +293,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
     private func providerResponse(
         for command: ProviderCommand,
         result: ProviderResponse.Result = .ok,
+        activeFlowCount: Int? = nil,
         closedFlowCount: Int = 0,
         durationMilliseconds: Int = 0,
         errorCode: String? = nil,
@@ -274,7 +302,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
         .status(
             for: command,
             result: result,
-            activeFlowCount: registry.activeCount,
+            activeFlowCount: activeFlowCount ?? registry.activeCount,
             closedFlowCount: closedFlowCount,
             durationMilliseconds: durationMilliseconds,
             errorCode: errorCode,

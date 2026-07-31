@@ -6,6 +6,7 @@ struct ProviderCommand: Codable, Equatable {
     enum Action: String, Codable {
         case status
         case disconnectNow
+        case prepareToDisable
         case updateTargetIdentity
         case exportDiagnostics
     }

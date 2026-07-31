@@ -18,4 +18,49 @@ final class ProxyManagerControllerTests: XCTestCase {
             ProviderCommand.currentProtocolVersion
         )
     }
+
+    func testDisablePreflightProceedsOnlyForOKResponse() {
+        let command = ProviderCommand(action: .prepareToDisable)
+        let response = ProviderResponse.status(
+            for: command,
+            activeFlowCount: 0
+        )
+
+        XCTAssertEqual(
+            ProxyManagerController.disablePreflightDecision(for: response),
+            .proceed
+        )
+    }
+
+    func testDisablePreflightBlocksForActiveFlows() {
+        let command = ProviderCommand(action: .prepareToDisable)
+        let response = ProviderResponse.status(
+            for: command,
+            result: .notReady,
+            activeFlowCount: 3,
+            errorCode: "activeFlowsPreventDisable",
+            errorSummary: "Target flows are still active."
+        )
+
+        XCTAssertEqual(
+            ProxyManagerController.disablePreflightDecision(for: response),
+            .activeFlows(3)
+        )
+    }
+
+    func testDisablePreflightRejectsUnexpectedProviderFailure() {
+        let command = ProviderCommand(action: .prepareToDisable)
+        let response = ProviderResponse.status(
+            for: command,
+            result: .failed,
+            activeFlowCount: 0,
+            errorCode: "unexpected",
+            errorSummary: "Unexpected provider failure."
+        )
+
+        XCTAssertEqual(
+            ProxyManagerController.disablePreflightDecision(for: response),
+            .rejected("Unexpected provider failure.")
+        )
+    }
 }

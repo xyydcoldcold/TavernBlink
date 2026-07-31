@@ -42,4 +42,13 @@ final class ProviderCommandTests: XCTestCase {
         XCTAssertEqual(response.result, .ok)
         XCTAssertEqual(response.diagnostics, diagnostics)
     }
+
+    func testPrepareToDisableCommandRoundTrips() throws {
+        let command = ProviderCommand(action: .prepareToDisable)
+
+        let data = try JSONEncoder().encode(command)
+        let decoded = try JSONDecoder().decode(ProviderCommand.self, from: data)
+
+        XCTAssertEqual(decoded, command)
+    }
 }
