@@ -67,7 +67,7 @@ Perform these steps in order:
    Hearthstone TCP flows; Hearthstone is responsible for reconnecting them.
 
 Do not repeatedly click **Disconnect Now** if Hearthstone exits or does not
-recover. Disable TavernBlink, record what happened, and restart Hearthstone
+recover. Exit Hearthstone, quit TavernBlink, record what happened, and restart
 normally.
 
 ## Normal use
@@ -81,17 +81,17 @@ normally.
   one target flow is active.
 - Click **Refresh** after approving an extension or changing game state if the
   displayed status has not updated.
-- A **Disable** request is intentionally blocked while target flows are active,
-  because macOS cannot hand an already claimed TCP connection back to the
-  system without interrupting it. Exit Hearthstone or wait for the target flows
-  to close before disabling the proxy.
-- Quitting TavernBlink closes only its menu-bar UI. Once no target flows are
-  active, use **Disable** first when you want the proxy turned off.
+- **Quit TavernBlink** safely disables the transparent proxy before closing the
+  menu-bar app.
+- Quit is blocked while target flows are active because macOS cannot hand an
+  already claimed TCP connection back to the system without interrupting it.
+  Exit Hearthstone, then try Quit again.
 
 ## Uninstall
 
-1. Open TavernBlink and click **Disable**.
-2. Click **Quit TavernBlink**.
+1. Exit Hearthstone so no target flows remain.
+2. Open TavernBlink and click **Quit TavernBlink**. Wait for the app to close,
+   which confirms that it safely disabled the proxy.
 3. Move `/Applications/TavernBlink.app` to the Trash.
 4. Open **System Settings → General → Login Items & Extensions → Network
    Extensions** and confirm TavernBlink is no longer enabled. On macOS 13 or 14,

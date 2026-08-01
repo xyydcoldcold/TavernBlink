@@ -94,25 +94,10 @@ struct MenuBarView: View {
                 Button("Refresh") {
                     model.refresh()
                 }
-                Button("Disable") {
-                    model.disableProxy()
-                }
-                .disabled(!model.canDisableProxy)
-                .help(
-                    model.activeFlowCount > 0
-                        ? "Disable requests are blocked until all target flows close."
-                        : "Stop and disable the transparent proxy configuration."
-                )
                 Spacer()
                 Button("Details…") {
                     NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
                 }
-            }
-
-            if model.activeFlowCount > 0 {
-                Text("Disable is blocked while target flows are active; exit Hearthstone first.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
 
             Divider()

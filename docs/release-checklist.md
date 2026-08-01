@@ -11,8 +11,8 @@
 - [x] DMG is signed, notarized, and stapled.
 - [x] `codesign`, `stapler`, and `spctl` verification pass.
 - [ ] SHA-256 checksum is published.
-- [ ] A second physical Mac completes install, approvals, disconnect, disable,
-      and uninstall.
+- [ ] A second physical Mac completes install, approvals, disconnect, safe
+      automatic disable on Quit, and uninstall.
 - [ ] Release notes repeat the unofficial-tool and account-risk warning.
 - [ ] Privacy and diagnostic-export contents are documented.
 

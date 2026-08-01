@@ -48,8 +48,10 @@ the system-extension installation entitlement.
 - [ ] Observe real `NEVPNStatus` changes rather than fixed delays.
 - [ ] Reconcile duplicate `connected` notifications with the latest provider
       `activeFlowCount` without overwriting a live-flow UI state.
-- [ ] Stop and disable it, then confirm the UI reflects system state.
-- [ ] Repeat enable/disable and app relaunch without duplicate configurations.
+- [ ] Quit with no target flows, then confirm the proxy is disabled before the
+      app terminates.
+- [ ] Confirm Quit is blocked while target flows are active.
+- [ ] Repeat configure/quit and app relaunch without duplicate configurations.
 
 Gate: install/start/stop is repeatable and recoverable.
 

@@ -25,6 +25,7 @@
 		B00100000000000000000016 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* NetworkExtension.framework */; };
 		B00100000000000000000017 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* Security.framework */; };
 		B00100000000000000000018 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B00100000000000000000019 /* ApplicationTerminationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000012 /* ApplicationTerminationCoordinator.swift */; };
 		B00200000000000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000001 /* main.swift */; };
 		B00200000000000000000002 /* TransparentProxyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000002 /* TransparentProxyProvider.swift */; };
 		B00200000000000000000003 /* FlowMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000003 /* FlowMatcher.swift */; };
@@ -62,6 +63,8 @@
 		B00300000000000000000021 /* ProviderMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000008 /* ProviderMessenger.swift */; };
 		B00300000000000000000022 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = S00100000000000000000004 /* AppConstants.swift */; };
 		B00300000000000000000023 /* ProxyManagerControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000009 /* ProxyManagerControllerTests.swift */; };
+		B00300000000000000000024 /* ApplicationTerminationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000012 /* ApplicationTerminationCoordinator.swift */; };
+		B00300000000000000000025 /* ApplicationTerminationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000010 /* ApplicationTerminationCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +103,7 @@
 		A00100000000000000000009 /* TargetAppIdentityResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetAppIdentityResolver.swift; sourceTree = "<group>"; };
 		A00100000000000000000010 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A00100000000000000000011 /* TavernBlink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TavernBlink.entitlements; sourceTree = "<group>"; };
+		A00100000000000000000012 /* ApplicationTerminationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationTerminationCoordinator.swift; sourceTree = "<group>"; };
 		D00100000000000000000001 /* TavernBlink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavernBlink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000003 /* TavernBlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TavernBlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,6 +135,7 @@
 		T00100000000000000000007 /* TCPFlowRelayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPFlowRelayTests.swift; sourceTree = "<group>"; };
 		T00100000000000000000008 /* TargetAppIdentityResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetAppIdentityResolverTests.swift; sourceTree = "<group>"; };
 		T00100000000000000000009 /* ProxyManagerControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyManagerControllerTests.swift; sourceTree = "<group>"; };
+		T00100000000000000000010 /* ApplicationTerminationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationTerminationCoordinatorTests.swift; sourceTree = "<group>"; };
 		X00100000000000000000001 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		X00100000000000000000002 /* Local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig.example; sourceTree = "<group>"; };
 		X00100000000000000000003 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
@@ -244,6 +249,7 @@
 				A00100000000000000000007 /* ProxyManagerController.swift */,
 				A00100000000000000000008 /* ProviderMessenger.swift */,
 				A00100000000000000000009 /* TargetAppIdentityResolver.swift */,
+				A00100000000000000000012 /* ApplicationTerminationCoordinator.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -311,6 +317,7 @@
 				T00100000000000000000007 /* TCPFlowRelayTests.swift */,
 				T00100000000000000000008 /* TargetAppIdentityResolverTests.swift */,
 				T00100000000000000000009 /* ProxyManagerControllerTests.swift */,
+				T00100000000000000000010 /* ApplicationTerminationCoordinatorTests.swift */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -503,6 +510,7 @@
 				B00100000000000000000012 /* TargetAppIdentity.swift in Sources */,
 				B00100000000000000000013 /* AppConstants.swift in Sources */,
 				B00100000000000000000014 /* SharedConfiguration.swift in Sources */,
+				B00100000000000000000019 /* ApplicationTerminationCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,6 +547,8 @@
 				B00300000000000000000020 /* ProxyManagerController.swift in Sources */,
 				B00300000000000000000021 /* ProviderMessenger.swift in Sources */,
 				B00300000000000000000022 /* AppConstants.swift in Sources */,
+				B00300000000000000000024 /* ApplicationTerminationCoordinator.swift in Sources */,
+				B00300000000000000000025 /* ApplicationTerminationCoordinatorTests.swift in Sources */,
 				B00300000000000000000003 /* ProviderCommand.swift in Sources */,
 				B00300000000000000000004 /* ProviderResponse.swift in Sources */,
 				B00300000000000000000005 /* TargetAppIdentity.swift in Sources */,
@@ -616,7 +626,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -637,7 +647,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

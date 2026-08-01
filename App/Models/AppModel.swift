@@ -42,15 +42,6 @@ final class AppModel: ObservableObject {
         activeFlowCount > 0 && managerState == .connected
     }
 
-    var canDisableProxy: Bool {
-        switch managerState {
-        case .disconnected, .connected, .invalid:
-            return status != .starting && status != .disconnecting
-        case .missing, .disabled, .connecting, .reasserting, .disconnecting:
-            return false
-        }
-    }
-
     func refresh() {
         lastError = nil
         targetIdentity = sharedConfiguration.targetIdentity
@@ -157,14 +148,20 @@ final class AppModel: ObservableObject {
         }
     }
 
-    func disableProxy() {
-        proxyManagerController.disable { [weak self] result in
+    func prepareForTermination(
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        lastError = nil
+        proxyManagerController.disableIfConfigured { [weak self] result in
             Task { @MainActor in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 switch result {
                 case .success:
                     self.activeFlowCount = 0
                     self.status = .configurationMissing
+                    completion(.success(()))
                 case let .failure(error):
                     if let controllerError = error as? ProxyManagerController.ControllerError,
                        case let .activeFlowsPreventDisable(count) = controllerError {
@@ -177,6 +174,7 @@ final class AppModel: ObservableObject {
                         self.status = .error
                         self.lastError = error.localizedDescription
                     }
+                    completion(.failure(error))
                 }
             }
         }

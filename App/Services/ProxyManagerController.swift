@@ -36,11 +36,11 @@ final class ProxyManagerController {
             case let .duplicateConfigurations(count):
                 return "Found \(count) TavernBlink proxy configurations. Remove duplicates before continuing."
             case let .activeFlowsPreventDisable(count):
-                return "Disable was blocked because \(count) target flow\(count == 1 ? " is" : "s are") still active. TavernBlink left the proxy running so the game connection was not interrupted. Exit Hearthstone or wait for the connection to close, then try Disable again."
+                return "Quit was blocked because \(count) target flow\(count == 1 ? " is" : "s are") still active. TavernBlink left the proxy running so the game connection was not interrupted. Exit Hearthstone, then try Quit again."
             case let .disablePreflightRejected(summary):
-                return "TavernBlink could not safely verify that all target flows had closed, so the proxy was left enabled. \(summary)"
+                return "TavernBlink could not safely verify that all target flows had closed, so Quit was cancelled and the proxy was left enabled. \(summary)"
             case .providerBusy:
-                return "The transparent proxy is changing state. Wait for it to settle before disabling it."
+                return "The transparent proxy is changing state. Wait for it to settle before quitting."
             }
         }
     }
@@ -254,12 +254,28 @@ final class ProxyManagerController {
         messenger.send(command, through: session, completion: completion)
     }
 
-    func disable(completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let manager else {
-            completion(.failure(ControllerError.noManager))
-            return
+    func disableIfConfigured(
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        load { [weak self] result in
+            guard let self else {
+                return
+            }
+            switch result {
+            case let .failure(error):
+                completion(.failure(error))
+            case .success(nil):
+                completion(.success(()))
+            case let .success(manager?):
+                self.disable(manager, completion: completion)
+            }
         }
+    }
 
+    private func disable(
+        _ manager: NETransparentProxyManager,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         if startCompletion != nil {
             finishStart(.failure(ControllerError.noManager))
         }
