@@ -13,6 +13,7 @@ final class AppModel: ObservableObject {
     private let systemExtensionController = SystemExtensionController()
     private let proxyManagerController = ProxyManagerController()
     private let identityResolver = TargetAppIdentityResolver()
+    private let targetApplicationPanelPresenter = TargetApplicationPanelPresenter()
     private lazy var sharedConfiguration = SharedConfiguration()
     private var extensionState: SystemExtensionController.State = .notInstalled
     private var managerState: ProxyManagerController.State = .missing
@@ -61,17 +62,15 @@ final class AppModel: ObservableObject {
     }
 
     func chooseTargetApplication() {
-        let panel = NSOpenPanel()
-        panel.title = "Choose Hearthstone"
-        panel.prompt = "Verify App"
-        panel.allowedContentTypes = [.application]
-        panel.allowsMultipleSelection = false
-        panel.canChooseDirectories = false
-
-        guard panel.runModal() == .OK, let url = panel.url else {
-            return
+        targetApplicationPanelPresenter.present { [weak self] url in
+            guard let self, let url else {
+                return
+            }
+            self.verifyTargetApplication(at: url)
         }
+    }
 
+    private func verifyTargetApplication(at url: URL) {
         do {
             let selectedURL = url.standardizedFileURL.resolvingSymlinksInPath()
             let identity = try identityResolver.resolveApplication(at: selectedURL)
