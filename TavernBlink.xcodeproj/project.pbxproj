@@ -27,6 +27,8 @@
 		B00100000000000000000018 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B00100000000000000000019 /* ApplicationTerminationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000012 /* ApplicationTerminationCoordinator.swift */; };
 		B00100000000000000000020 /* TargetApplicationPanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000013 /* TargetApplicationPanelPresenter.swift */; };
+		B00100000000000000000021 /* FloatingPanelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000014 /* FloatingPanelConfiguration.swift */; };
+		B00100000000000000000022 /* FloatingDisconnectPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000015 /* FloatingDisconnectPanelController.swift */; };
 		B00200000000000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000001 /* main.swift */; };
 		B00200000000000000000002 /* TransparentProxyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000002 /* TransparentProxyProvider.swift */; };
 		B00200000000000000000003 /* FlowMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = P00100000000000000000003 /* FlowMatcher.swift */; };
@@ -68,6 +70,8 @@
 		B00300000000000000000025 /* ApplicationTerminationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000010 /* ApplicationTerminationCoordinatorTests.swift */; };
 		B00300000000000000000026 /* TargetApplicationPanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000013 /* TargetApplicationPanelPresenter.swift */; };
 		B00300000000000000000027 /* TargetApplicationPanelPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000011 /* TargetApplicationPanelPresenterTests.swift */; };
+		B00300000000000000000028 /* FloatingPanelConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00100000000000000000014 /* FloatingPanelConfiguration.swift */; };
+		B00300000000000000000029 /* FloatingPanelConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = T00100000000000000000012 /* FloatingPanelConfigurationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +112,8 @@
 		A00100000000000000000011 /* TavernBlink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TavernBlink.entitlements; sourceTree = "<group>"; };
 		A00100000000000000000012 /* ApplicationTerminationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationTerminationCoordinator.swift; sourceTree = "<group>"; };
 		A00100000000000000000013 /* TargetApplicationPanelPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetApplicationPanelPresenter.swift; sourceTree = "<group>"; };
+		A00100000000000000000014 /* FloatingPanelConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelConfiguration.swift; sourceTree = "<group>"; };
+		A00100000000000000000015 /* FloatingDisconnectPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingDisconnectPanelController.swift; sourceTree = "<group>"; };
 		D00100000000000000000001 /* TavernBlink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TavernBlink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000002 /* com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.xyydcoldcold.TavernBlink.ProxyExtension.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00100000000000000000003 /* TavernBlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TavernBlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +147,7 @@
 		T00100000000000000000009 /* ProxyManagerControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyManagerControllerTests.swift; sourceTree = "<group>"; };
 		T00100000000000000000010 /* ApplicationTerminationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationTerminationCoordinatorTests.swift; sourceTree = "<group>"; };
 		T00100000000000000000011 /* TargetApplicationPanelPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetApplicationPanelPresenterTests.swift; sourceTree = "<group>"; };
+		T00100000000000000000012 /* FloatingPanelConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPanelConfigurationTests.swift; sourceTree = "<group>"; };
 		X00100000000000000000001 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		X00100000000000000000002 /* Local.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig.example; sourceTree = "<group>"; };
 		X00100000000000000000003 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
@@ -213,6 +220,7 @@
 			children = (
 				A00100000000000000000001 /* TavernBlinkApp.swift */,
 				G00100000000000000000004 /* MenuBar */,
+				G00100000000000000000019 /* FloatingPanel */,
 				G00100000000000000000005 /* Onboarding */,
 				G00100000000000000000006 /* Models */,
 				G00100000000000000000007 /* Services */,
@@ -228,6 +236,15 @@
 				A00100000000000000000002 /* MenuBarView.swift */,
 			);
 			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000019 /* FloatingPanel */ = {
+			isa = PBXGroup;
+			children = (
+				A00100000000000000000014 /* FloatingPanelConfiguration.swift */,
+				A00100000000000000000015 /* FloatingDisconnectPanelController.swift */,
+			);
+			path = FloatingPanel;
 			sourceTree = "<group>";
 		};
 		G00100000000000000000005 /* Onboarding */ = {
@@ -325,6 +342,7 @@
 				T00100000000000000000009 /* ProxyManagerControllerTests.swift */,
 				T00100000000000000000010 /* ApplicationTerminationCoordinatorTests.swift */,
 				T00100000000000000000011 /* TargetApplicationPanelPresenterTests.swift */,
+				T00100000000000000000012 /* FloatingPanelConfigurationTests.swift */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -519,6 +537,8 @@
 				B00100000000000000000014 /* SharedConfiguration.swift in Sources */,
 				B00100000000000000000019 /* ApplicationTerminationCoordinator.swift in Sources */,
 				B00100000000000000000020 /* TargetApplicationPanelPresenter.swift in Sources */,
+				B00100000000000000000021 /* FloatingPanelConfiguration.swift in Sources */,
+				B00100000000000000000022 /* FloatingDisconnectPanelController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -559,6 +579,8 @@
 				B00300000000000000000025 /* ApplicationTerminationCoordinatorTests.swift in Sources */,
 				B00300000000000000000026 /* TargetApplicationPanelPresenter.swift in Sources */,
 				B00300000000000000000027 /* TargetApplicationPanelPresenterTests.swift in Sources */,
+				B00300000000000000000028 /* FloatingPanelConfiguration.swift in Sources */,
+				B00300000000000000000029 /* FloatingPanelConfigurationTests.swift in Sources */,
 				B00300000000000000000003 /* ProviderCommand.swift in Sources */,
 				B00300000000000000000004 /* ProviderResponse.swift in Sources */,
 				B00300000000000000000005 /* TargetAppIdentity.swift in Sources */,
@@ -636,7 +658,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = App/TavernBlink.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -657,7 +679,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

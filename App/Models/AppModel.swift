@@ -18,6 +18,9 @@ final class AppModel: ObservableObject {
     private var extensionState: SystemExtensionController.State = .notInstalled
     private var managerState: ProxyManagerController.State = .missing
     private var statusRequestInFlight = false
+    private var providerStatusTimer: Timer?
+
+    private static let providerStatusPollInterval: TimeInterval = 1
 
     init() {
         systemExtensionController.onStateChange = { [weak self] state in
@@ -195,7 +198,7 @@ final class AppModel: ObservableObject {
         }
     }
 
-    private func requestProviderStatus() {
+    private func requestProviderStatus(reportErrors: Bool = true) {
         guard !statusRequestInFlight else {
             return
         }
@@ -208,11 +211,38 @@ final class AppModel: ObservableObject {
                 case let .success(response):
                     self.apply(response)
                 case let .failure(error):
-                    self.status = .error
-                    self.lastError = error.localizedDescription
+                    if reportErrors {
+                        self.status = .error
+                        self.lastError = error.localizedDescription
+                    }
                 }
             }
         }
+    }
+
+    private func startProviderStatusPolling() {
+        guard providerStatusTimer == nil else {
+            return
+        }
+
+        let timer = Timer(
+            timeInterval: Self.providerStatusPollInterval,
+            repeats: true
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self, self.managerState == .connected else {
+                    return
+                }
+                self.requestProviderStatus(reportErrors: false)
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        providerStatusTimer = timer
+    }
+
+    private func stopProviderStatusPolling() {
+        providerStatusTimer?.invalidate()
+        providerStatusTimer = nil
     }
 
     private func apply(_ response: ProviderResponse) {
@@ -259,7 +289,10 @@ final class AppModel: ObservableObject {
     private func handleManagerState(_ state: ProxyManagerController.State) {
         let previousState = managerState
         managerState = state
-        if state != .connected {
+        if state == .connected {
+            startProviderStatusPolling()
+        } else {
+            stopProviderStatusPolling()
             activeFlowCount = 0
         }
         reconcileStatus()

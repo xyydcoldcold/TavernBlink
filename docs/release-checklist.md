@@ -3,6 +3,10 @@
 - [x] Phase 0 has a written Go decision.
 - [ ] Unit tests and the full relay harness pass.
 - [ ] Physical-Mac network and game matrices pass.
+- [ ] The floating Disconnect panel remains clickable over full-screen
+      Hearthstone without taking keyboard focus from the game.
+- [ ] After one successful disconnect and reconnect, the floating button
+      automatically becomes available and a second disconnect also succeeds.
 - [x] Host app and system extension are Universal 2.
 - [x] Archive contains the extension under
       `Contents/Library/SystemExtensions`.

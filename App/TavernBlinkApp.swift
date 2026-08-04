@@ -5,6 +5,9 @@ import SwiftUI
 final class TavernBlinkAppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
 
+    private lazy var floatingDisconnectPanelController =
+        FloatingDisconnectPanelController(model: model)
+
     private lazy var terminationCoordinator = ApplicationTerminationCoordinator {
         [weak self] completion in
         guard let self else {
@@ -12,6 +15,11 @@ final class TavernBlinkAppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         self.model.prepareForTermination(completion: completion)
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        model.refresh()
+        floatingDisconnectPanelController.show()
     }
 
     func applicationShouldTerminate(

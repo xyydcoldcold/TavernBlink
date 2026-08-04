@@ -23,6 +23,9 @@ matched flows when the user clicks **Disconnect Now**.
 
 TavernBlink is a menu-bar app. It does not open a normal Dock window. Look for
 the TavernBlink network icon near the right side of the macOS menu bar.
+It also shows a compact, movable **Disconnect Now** panel that stays available
+across Spaces and alongside full-screen Hearthstone. The original
+**Disconnect Now** button remains in the menu-bar panel.
 
 The official release is Developer ID signed, notarized by Apple, and carries a
 stapled notarization ticket. If macOS says the app is damaged or cannot verify
@@ -79,6 +82,10 @@ normally.
   Hearthstone connection currently matches.
 - **Disconnect Now** remains disabled until the proxy is connected and at least
   one target flow is active.
+- After a disconnect, TavernBlink automatically detects Hearthstone's replacement
+  flow and re-enables **Disconnect Now** when the new connection is ready.
+- The floating **Disconnect Now** panel can be dragged to a preferred location.
+  TavernBlink restores that position the next time it launches.
 - Click **Refresh** after approving an extension or changing game state if the
   displayed status has not updated.
 - **Quit TavernBlink** safely disables the transparent proxy before closing the
