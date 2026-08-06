@@ -10,6 +10,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var activeFlowCount = 0
     @Published private(set) var lastError: String?
 
+    private let languageSettings: AppLanguageSettings
     private let systemExtensionController = SystemExtensionController()
     private let proxyManagerController = ProxyManagerController()
     private let identityResolver = TargetAppIdentityResolver()
@@ -22,7 +23,8 @@ final class AppModel: ObservableObject {
 
     private static let providerStatusPollInterval: TimeInterval = 1
 
-    init() {
+    init(languageSettings: AppLanguageSettings) {
+        self.languageSettings = languageSettings
         systemExtensionController.onStateChange = { [weak self] state in
             Task { @MainActor in
                 self?.handleActivationState(state)
@@ -65,7 +67,9 @@ final class AppModel: ObservableObject {
     }
 
     func chooseTargetApplication() {
-        targetApplicationPanelPresenter.present { [weak self] url in
+        targetApplicationPanelPresenter.present(
+            language: languageSettings.language
+        ) { [weak self] url in
             guard let self, let url else {
                 return
             }
@@ -83,19 +87,20 @@ final class AppModel: ObservableObject {
             lastError = nil
         } catch {
             status = .error
-            lastError = error.localizedDescription
+            lastError = AppStrings(languageSettings.language).errorMessage(error)
         }
     }
 
     func configureAndStartProxy() {
+        let strings = AppStrings(languageSettings.language)
         guard targetIdentity != nil else {
-            lastError = "Choose and verify Hearthstone first."
+            lastError = strings.chooseAndVerifyFirst
             return
         }
 
         guard let targetApplicationPath = sharedConfiguration.targetApplicationPath else {
             status = .error
-            lastError = "Choose Hearthstone again so TavernBlink can reverify it before starting."
+            lastError = strings.chooseAgainToReverify
             return
         }
 
@@ -108,7 +113,7 @@ final class AppModel: ObservableObject {
             self.targetIdentity = targetIdentity
         } catch {
             status = .error
-            lastError = "Hearthstone revalidation failed: \(error.localizedDescription)"
+            lastError = strings.revalidationFailed(strings.errorMessage(error))
             return
         }
 
@@ -122,7 +127,9 @@ final class AppModel: ObservableObject {
                     self.sendIdentity(targetIdentity)
                 case let .failure(error):
                     self.status = .error
-                    self.lastError = error.localizedDescription
+                    self.lastError = AppStrings(
+                        self.languageSettings.language
+                    ).errorMessage(error)
                 }
             }
         }
@@ -144,7 +151,9 @@ final class AppModel: ObservableObject {
                     }
                 case let .failure(error):
                     self.status = .error
-                    self.lastError = error.localizedDescription
+                    self.lastError = AppStrings(
+                        self.languageSettings.language
+                    ).errorMessage(error)
                 }
             }
         }
@@ -171,10 +180,14 @@ final class AppModel: ObservableObject {
                         self.status = count > 0
                             ? .readyWithFlow(count)
                             : .readyNoFlow
-                        self.lastError = controllerError.localizedDescription
+                        self.lastError = AppStrings(
+                            self.languageSettings.language
+                        ).errorMessage(controllerError)
                     } else {
                         self.status = .error
-                        self.lastError = error.localizedDescription
+                        self.lastError = AppStrings(
+                            self.languageSettings.language
+                        ).errorMessage(error)
                     }
                     completion(.failure(error))
                 }
@@ -192,7 +205,9 @@ final class AppModel: ObservableObject {
                     self.apply(response)
                 case let .failure(error):
                     self.status = .error
-                    self.lastError = error.localizedDescription
+                    self.lastError = AppStrings(
+                        self.languageSettings.language
+                    ).errorMessage(error)
                 }
             }
         }
@@ -213,7 +228,9 @@ final class AppModel: ObservableObject {
                 case let .failure(error):
                     if reportErrors {
                         self.status = .error
-                        self.lastError = error.localizedDescription
+                        self.lastError = AppStrings(
+                            self.languageSettings.language
+                        ).errorMessage(error)
                     }
                 }
             }
@@ -264,11 +281,11 @@ final class AppModel: ObservableObject {
         case .notInstalled, .disabled, .needsApproval, .activated:
             reconcileStatus()
         case .rebootRequired:
-            lastError = "A restart is required to finish activating the extension."
+            lastError = AppStrings(languageSettings.language).restartRequired
             reconcileStatus()
         case let .failed(error):
             status = .error
-            lastError = error.localizedDescription
+            lastError = AppStrings(languageSettings.language).errorMessage(error)
         }
     }
 
@@ -282,7 +299,7 @@ final class AppModel: ObservableObject {
             }
         case let .failure(error):
             status = .error
-            lastError = error.localizedDescription
+            lastError = AppStrings(languageSettings.language).errorMessage(error)
         }
     }
 

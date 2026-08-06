@@ -11,27 +11,8 @@ enum AppStatus: Equatable {
     case success(Int)
     case error
 
-    var message: String {
-        switch self {
-        case .needsInstall:
-            return "Network component is not installed"
-        case .needsApproval:
-            return "Approve TavernBlink in System Settings"
-        case .configurationMissing:
-            return "Transparent proxy is not configured"
-        case .starting:
-            return "Network component is starting"
-        case .readyNoFlow:
-            return "Ready; waiting for a target flow"
-        case let .readyWithFlow(count):
-            return "Ready with \(count) target flow\(count == 1 ? "" : "s")"
-        case .disconnecting:
-            return "Closing target flows"
-        case let .success(count):
-            return "Closed \(count) target flow\(count == 1 ? "" : "s")"
-        case .error:
-            return "An operation failed"
-        }
+    func message(in language: AppLanguage) -> String {
+        AppStrings(language).statusMessage(self)
     }
 
     var systemImageName: String {

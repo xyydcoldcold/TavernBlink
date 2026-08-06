@@ -3,6 +3,11 @@ import SwiftUI
 
 struct MenuBarView: View {
     @ObservedObject var model: AppModel
+    @ObservedObject var languageSettings: AppLanguageSettings
+
+    private var strings: AppStrings {
+        AppStrings(languageSettings.language)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -12,7 +17,7 @@ struct MenuBarView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("TavernBlink")
                         .font(.headline)
-                    Text(model.status.message)
+                    Text(model.status.message(in: languageSettings.language))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -26,12 +31,12 @@ struct MenuBarView: View {
                         .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
-                    Text("Team ID: \(identity.teamIdentifier)")
+                    Text("\(strings.teamID): \(identity.teamIdentifier)")
                         .font(.caption.monospaced())
                         .foregroundStyle(.secondary)
                     if identity.verificationMode == .codeSignatureOnly {
                         Label(
-                            "Blizzard code verified; bundle resources were not fully verified.",
+                            strings.blizzardVerificationWarning,
                             systemImage: "exclamationmark.shield"
                         )
                         .font(.caption)
@@ -39,22 +44,29 @@ struct MenuBarView: View {
                     }
                 }
             } else {
-                Text("No verified Hearthstone application selected.")
+                Text(strings.noVerifiedHearthstone)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             if let diagnostics = model.providerDiagnostics {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Phase 0 flow observations")
+                    Text(strings.phaseZeroObservations)
                         .font(.caption.weight(.semibold))
-                    Text("TCP observed: \(diagnostics.observedTCPFlowCount) · target matches: \(diagnostics.matchedTCPFlowCount)")
                     Text(
-                        "Last source signing ID: \(diagnostics.lastObservedSigningIdentifier ?? "not observed")"
+                        strings.flowSummary(
+                            observed: diagnostics.observedTCPFlowCount,
+                            matched: diagnostics.matchedTCPFlowCount
+                        )
                     )
+                    Text(strings.lastSigningID(diagnostics.lastObservedSigningIdentifier))
                     .lineLimit(1)
                     if diagnostics.missingSigningIdentifierCount > 0 {
-                        Text("Flows missing signing ID: \(diagnostics.missingSigningIdentifierCount)")
+                        Text(
+                            strings.flowsMissingSigningID(
+                                diagnostics.missingSigningIdentifierCount
+                            )
+                        )
                     }
                 }
                 .font(.caption.monospaced())
@@ -71,38 +83,48 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Install Network Component") {
+            Button(strings.installNetworkComponent) {
                 model.installSystemExtension()
             }
 
-            Button("Choose Hearthstone…") {
+            Button(strings.chooseHearthstone) {
                 model.chooseTargetApplication()
             }
 
-            Button("Configure and Start Proxy") {
+            Button(strings.configureAndStartProxy) {
                 model.configureAndStartProxy()
             }
             .disabled(!model.canConfigureProxy)
 
-            Button("Disconnect Now") {
+            Button(strings.disconnectNow) {
                 model.disconnectNow()
             }
             .buttonStyle(.borderedProminent)
             .disabled(!model.canDisconnect)
 
             HStack {
-                Button("Refresh") {
+                Button(strings.refresh) {
                     model.refresh()
                 }
                 Spacer()
-                Button("Details…") {
-                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                if #available(macOS 14.0, *) {
+                    SettingsLink {
+                        Text(strings.settings)
+                    }
+                } else {
+                    Button(strings.settings) {
+                        NSApp.sendAction(
+                            Selector(("showSettingsWindow:")),
+                            to: nil,
+                            from: nil
+                        )
+                    }
                 }
             }
 
             Divider()
 
-            Button("Quit TavernBlink") {
+            Button(strings.quitTavernBlink) {
                 NSApplication.shared.terminate(nil)
             }
         }

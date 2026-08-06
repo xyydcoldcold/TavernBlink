@@ -3,10 +3,21 @@ import SwiftUI
 
 @MainActor
 final class TavernBlinkAppDelegate: NSObject, NSApplicationDelegate {
-    let model = AppModel()
+    let languageSettings: AppLanguageSettings
+    let model: AppModel
+
+    override init() {
+        let languageSettings = AppLanguageSettings()
+        self.languageSettings = languageSettings
+        model = AppModel(languageSettings: languageSettings)
+        super.init()
+    }
 
     private lazy var floatingDisconnectPanelController =
-        FloatingDisconnectPanelController(model: model)
+        FloatingDisconnectPanelController(
+            model: model,
+            languageSettings: languageSettings
+        )
 
     private lazy var terminationCoordinator = ApplicationTerminationCoordinator {
         [weak self] completion in
@@ -42,12 +53,13 @@ final class TavernBlinkAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func presentQuitBlockedAlert() {
+        let strings = AppStrings(languageSettings.language)
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "TavernBlink could not quit safely"
+        alert.messageText = strings.quitFailedTitle
         alert.informativeText = model.lastError
-            ?? "The transparent proxy is still active. TavernBlink was left open."
-        alert.addButton(withTitle: "OK")
+            ?? strings.proxyStillActive
+        alert.addButton(withTitle: strings.ok)
         NSApp.activate(ignoringOtherApps: true)
         alert.runModal()
     }
@@ -63,13 +75,19 @@ struct TavernBlinkApp: App {
             "TavernBlink",
             systemImage: appDelegate.model.status.systemImageName
         ) {
-            MenuBarView(model: appDelegate.model)
+            MenuBarView(
+                model: appDelegate.model,
+                languageSettings: appDelegate.languageSettings
+            )
         }
         .menuBarExtraStyle(.window)
 
         Settings {
-            OnboardingView(model: appDelegate.model)
-                .frame(width: 520, height: 430)
+            SettingsView(
+                model: appDelegate.model,
+                languageSettings: appDelegate.languageSettings
+            )
+            .frame(width: 560, height: 560)
         }
     }
 }

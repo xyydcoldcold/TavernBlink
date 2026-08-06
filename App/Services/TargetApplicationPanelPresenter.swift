@@ -8,11 +8,12 @@ final class TargetApplicationPanelPresenter {
         isDirectory: true
     )
 
-    static func makePanel() -> NSOpenPanel {
+    static func makePanel(language: AppLanguage = .english) -> NSOpenPanel {
+        let strings = AppStrings(language)
         let panel = NSOpenPanel()
-        panel.title = "Choose Hearthstone"
-        panel.prompt = "Verify App"
-        panel.message = "Select the official Hearthstone application."
+        panel.title = strings.chooseHearthstoneTitle
+        panel.prompt = strings.verifyApp
+        panel.message = strings.chooseHearthstoneMessage
         panel.directoryURL = defaultDirectoryURL
         panel.allowedContentTypes = [.application]
         panel.allowsMultipleSelection = false
@@ -22,8 +23,11 @@ final class TargetApplicationPanelPresenter {
         return panel
     }
 
-    func present(completion: @escaping (URL?) -> Void) {
-        let panel = Self.makePanel()
+    func present(
+        language: AppLanguage,
+        completion: @escaping (URL?) -> Void
+    ) {
+        let panel = Self.makePanel(language: language)
 
         if #available(macOS 14.0, *) {
             NSApp.activate()

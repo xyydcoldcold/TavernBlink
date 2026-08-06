@@ -7,6 +7,8 @@
       Hearthstone without taking keyboard focus from the game.
 - [ ] After one successful disconnect and reconnect, the floating button
       automatically becomes available and a second disconnect also succeeds.
+- [ ] Settings switches the menu-bar panel, floating control, and setup window
+      between English and Simplified Chinese, including after relaunch.
 - [x] Host app and system extension are Universal 2.
 - [x] Archive contains the extension under
       `Contents/Library/SystemExtensions`.

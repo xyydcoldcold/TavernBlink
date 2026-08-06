@@ -5,7 +5,10 @@ import SwiftUI
 final class FloatingDisconnectPanelController {
     private let panel: NSPanel
 
-    init(model: AppModel) {
+    init(
+        model: AppModel,
+        languageSettings: AppLanguageSettings
+    ) {
         panel = NSPanel(
             contentRect: NSRect(
                 origin: .zero,
@@ -17,7 +20,10 @@ final class FloatingDisconnectPanelController {
         )
         FloatingPanelConfiguration.apply(to: panel)
         panel.contentViewController = NSHostingController(
-            rootView: FloatingDisconnectView(model: model)
+            rootView: FloatingDisconnectView(
+                model: model,
+                languageSettings: languageSettings
+            )
         )
 
         if !panel.setFrameUsingName(FloatingPanelConfiguration.autosaveName) {
@@ -45,12 +51,17 @@ final class FloatingDisconnectPanelController {
 
 private struct FloatingDisconnectView: View {
     @ObservedObject var model: AppModel
+    @ObservedObject var languageSettings: AppLanguageSettings
+
+    private var strings: AppStrings {
+        AppStrings(languageSettings.language)
+    }
 
     var body: some View {
         Button {
             model.disconnectNow()
         } label: {
-            Label("Disconnect Now", systemImage: "bolt.slash.fill")
+            Label(strings.disconnectNow, systemImage: "bolt.slash.fill")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
         }
@@ -59,8 +70,8 @@ private struct FloatingDisconnectView: View {
         .disabled(!model.canDisconnect)
         .help(
             model.canDisconnect
-                ? "Close the active Hearthstone target flow."
-                : "Waiting for an active Hearthstone target flow."
+                ? strings.closeActiveFlowHelp
+                : strings.waitingForActiveFlowHelp
         )
         .padding(10)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))

@@ -86,6 +86,8 @@ normally.
   flow and re-enables **Disconnect Now** when the new connection is ready.
 - The floating **Disconnect Now** panel can be dragged to a preferred location.
   TavernBlink restores that position the next time it launches.
+- Open **Settings…** to switch the TavernBlink interface between English and
+  Simplified Chinese. The choice applies immediately and persists after restart.
 - Click **Refresh** after approving an extension or changing game state if the
   displayed status has not updated.
 - **Quit TavernBlink** safely disables the transparent proxy before closing the
