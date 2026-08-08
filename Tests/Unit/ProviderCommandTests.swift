@@ -34,13 +34,37 @@ final class ProviderCommandTests: XCTestCase {
         let response = ProviderResponse.status(
             for: command,
             activeFlowCount: 3,
+            disconnectibleFlowCount: 2,
             diagnostics: diagnostics
         )
 
         XCTAssertEqual(response.requestID, command.requestID)
         XCTAssertEqual(response.activeFlowCount, 3)
+        XCTAssertEqual(response.disconnectibleFlowCount, 2)
         XCTAssertEqual(response.result, .ok)
         XCTAssertEqual(response.diagnostics, diagnostics)
+    }
+
+    func testResponseDecodesLegacyPayloadWithoutDisconnectibleCount() throws {
+        let requestID = UUID()
+        let payload = """
+        {
+          "protocolVersion": 1,
+          "requestID": "\(requestID.uuidString)",
+          "result": "ok",
+          "activeFlowCount": 3,
+          "closedFlowCount": 0,
+          "durationMilliseconds": 0
+        }
+        """
+
+        let response = try JSONDecoder().decode(
+            ProviderResponse.self,
+            from: Data(payload.utf8)
+        )
+
+        XCTAssertEqual(response.requestID, requestID)
+        XCTAssertNil(response.disconnectibleFlowCount)
     }
 
     func testPrepareToDisableCommandRoundTrips() throws {

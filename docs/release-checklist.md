@@ -5,8 +5,18 @@
 - [ ] Physical-Mac network and game matrices pass.
 - [ ] The floating Disconnect panel remains clickable over full-screen
       Hearthstone without taking keyboard focus from the game.
+- [ ] The floating control remains visually centered at its fixed size after
+      upgrading from a build that saved a different panel size.
+- [ ] The ready state is visibly distinct from the disabled waiting state in
+      both light and dark backgrounds.
 - [ ] After one successful disconnect and reconnect, the floating button
       automatically becomes available and a second disconnect also succeeds.
+- [ ] Port `443`-only target traffic never enables Disconnect and is never
+      selected as a fallback.
+- [ ] Both current port `1119` and legacy port `3724` gameplay flows enable
+      Disconnect after the stability delay.
+- [ ] Rapid repeated clicks result in exactly one flow close during the
+      two-second cooldown; the replacement flow remains connected.
 - [ ] Settings switches the menu-bar panel, floating control, and setup window
       between English and Simplified Chinese, including after relaunch.
 - [x] Host app and system extension are Universal 2.

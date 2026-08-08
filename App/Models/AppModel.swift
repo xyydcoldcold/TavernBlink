@@ -8,6 +8,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var targetIdentity: TargetAppIdentity?
     @Published private(set) var providerDiagnostics: ProviderDiagnostics?
     @Published private(set) var activeFlowCount = 0
+    @Published private(set) var disconnectibleFlowCount = 0
     @Published private(set) var lastError: String?
 
     private let languageSettings: AppLanguageSettings
@@ -19,9 +20,13 @@ final class AppModel: ObservableObject {
     private var extensionState: SystemExtensionController.State = .notInstalled
     private var managerState: ProxyManagerController.State = .missing
     private var statusRequestInFlight = false
+    private var disconnectRequestInFlight = false
+    private var disconnectCooldownActive = false
     private var providerStatusTimer: Timer?
+    private var disconnectCooldownTimer: Timer?
 
     private static let providerStatusPollInterval: TimeInterval = 1
+    private static let disconnectCooldown: TimeInterval = 2
 
     init(languageSettings: AppLanguageSettings) {
         self.languageSettings = languageSettings
@@ -45,7 +50,11 @@ final class AppModel: ObservableObject {
     }
 
     var canDisconnect: Bool {
-        activeFlowCount > 0 && managerState == .connected
+        disconnectibleFlowCount > 0
+            && managerState == .connected
+            && !disconnectRequestInFlight
+            && !disconnectCooldownActive
+            && status != .disconnecting
     }
 
     func refresh() {
@@ -136,20 +145,27 @@ final class AppModel: ObservableObject {
     }
 
     func disconnectNow() {
+        guard canDisconnect else {
+            return
+        }
+        disconnectRequestInFlight = true
         status = .disconnecting
         lastError = nil
         proxyManagerController.send(ProviderCommand(action: .disconnectNow)) { [weak self] result in
             Task { @MainActor in
                 guard let self else { return }
+                self.disconnectRequestInFlight = false
                 switch result {
                 case let .success(response):
-                    self.activeFlowCount = response.activeFlowCount
+                    self.applyFlowCounts(response)
                     if response.closedFlowCount == 0 {
                         self.status = .readyNoFlow
                     } else {
+                        self.startDisconnectCooldown()
                         self.status = .success(response.closedFlowCount)
                     }
                 case let .failure(error):
+                    self.startDisconnectCooldown()
                     self.status = .error
                     self.lastError = AppStrings(
                         self.languageSettings.language
@@ -171,6 +187,8 @@ final class AppModel: ObservableObject {
                 switch result {
                 case .success:
                     self.activeFlowCount = 0
+                    self.disconnectibleFlowCount = 0
+                    self.stopDisconnectCooldown()
                     self.status = .configurationMissing
                     completion(.success(()))
                 case let .failure(error):
@@ -262,8 +280,44 @@ final class AppModel: ObservableObject {
         providerStatusTimer = nil
     }
 
-    private func apply(_ response: ProviderResponse) {
+    private func startDisconnectCooldown() {
+        disconnectCooldownActive = true
+        disconnectCooldownTimer?.invalidate()
+
+        let timer = Timer(
+            timeInterval: Self.disconnectCooldown,
+            repeats: false
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self else {
+                    return
+                }
+                self.disconnectCooldownActive = false
+                self.disconnectCooldownTimer = nil
+                if self.managerState == .connected {
+                    self.requestProviderStatus(reportErrors: false)
+                }
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        disconnectCooldownTimer = timer
+    }
+
+    private func stopDisconnectCooldown() {
+        disconnectCooldownTimer?.invalidate()
+        disconnectCooldownTimer = nil
+        disconnectCooldownActive = false
+        disconnectRequestInFlight = false
+    }
+
+    private func applyFlowCounts(_ response: ProviderResponse) {
         activeFlowCount = response.activeFlowCount
+        disconnectibleFlowCount =
+            response.disconnectibleFlowCount ?? response.activeFlowCount
+    }
+
+    private func apply(_ response: ProviderResponse) {
+        applyFlowCounts(response)
         providerDiagnostics = response.diagnostics
         guard response.result == .ok else {
             status = .error
@@ -310,7 +364,9 @@ final class AppModel: ObservableObject {
             startProviderStatusPolling()
         } else {
             stopProviderStatusPolling()
+            stopDisconnectCooldown()
             activeFlowCount = 0
+            disconnectibleFlowCount = 0
         }
         reconcileStatus()
         if state == .connected, previousState != .connected {

@@ -115,6 +115,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             guard registry.insertIfAccepting(
                 relay,
                 remotePort: relay.remotePort,
+                isHostnameEndpoint: tcpFlow.remoteHostname != nil,
                 isRelaying: false
             ) else {
                 matchingLogger.info(
@@ -254,7 +255,11 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
                 let duration = start.duration(to: .now)
                 let milliseconds = Int(duration.components.seconds * 1_000)
                     + Int(duration.components.attoseconds / 1_000_000_000_000_000)
-                if let remotePort = result.remotePort {
+                if let rejection = result.rejection {
+                    self.disconnectLogger.notice(
+                        "Ignored disconnect request: \(String(describing: rejection), privacy: .public)"
+                    )
+                } else if let remotePort = result.remotePort {
                     self.disconnectLogger.notice(
                         "Disconnect request completed \(result.closedCount) flow close(s) in \(milliseconds) ms; selected remote port \(remotePort)"
                     )
@@ -303,6 +308,7 @@ final class TransparentProxyProvider: NETransparentProxyProvider {
             for: command,
             result: result,
             activeFlowCount: activeFlowCount ?? registry.activeCount,
+            disconnectibleFlowCount: registry.disconnectibleGameplayCount,
             closedFlowCount: closedFlowCount,
             durationMilliseconds: durationMilliseconds,
             errorCode: errorCode,

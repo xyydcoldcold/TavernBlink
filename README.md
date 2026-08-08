@@ -64,10 +64,12 @@ Perform these steps in order:
 6. Wait for **Ready; waiting for a target flow**. Then launch Hearthstone. If
    Hearthstone was already open, quit and reopen it so new connections can
    reach the provider.
-7. Enter the game mode or match you intend to test. When TavernBlink shows
-   **Ready with N target flows**, **Disconnect Now** becomes available.
-8. Click **Disconnect Now** once. TavernBlink closes only the currently matched
-   Hearthstone TCP flows; Hearthstone is responsible for reconnecting them.
+7. Enter the game mode or match you intend to test. **Disconnect Now** becomes
+   available after TavernBlink observes a stable Hearthstone gameplay connection
+   on port `1119` or `3724`.
+8. Click **Disconnect Now** once. TavernBlink closes one selected gameplay
+   connection, temporarily locks the control against repeat requests, and waits
+   for Hearthstone to reconnect.
 
 Do not repeatedly click **Disconnect Now** if Hearthstone exits or does not
 recover. Exit Hearthstone, quit TavernBlink, record what happened, and restart
@@ -81,11 +83,15 @@ normally.
 - **Ready; waiting for a target flow** means the proxy is running but no active
   Hearthstone connection currently matches.
 - **Disconnect Now** remains disabled until the proxy is connected and at least
-  one target flow is active.
+  one stable gameplay flow on port `1119` or `3724` is active. Web/telemetry
+  traffic on port `443` is never used as a fallback disconnect target.
 - After a disconnect, TavernBlink automatically detects Hearthstone's replacement
-  flow and re-enables **Disconnect Now** when the new connection is ready.
+  flow and re-enables **Disconnect Now** only after the new gameplay connection
+  is stable and the repeat-request cooldown has ended.
 - The floating **Disconnect Now** panel can be dragged to a preferred location.
-  TavernBlink restores that position the next time it launches.
+  TavernBlink restores that position the next time it launches. A bright
+  red control with a green status dot means a target flow is ready to close;
+  the neutral gray state means TavernBlink is still waiting for a target flow.
 - Open **Settings…** to switch the TavernBlink interface between English and
   Simplified Chinese. The choice applies immediately and persists after restart.
 - Click **Refresh** after approving an extension or changing game state if the
@@ -137,8 +143,10 @@ flow. Launch or restart Hearthstone, enter a networked game mode, and click
 ### “Disconnect Now” is disabled
 
 The button is enabled only while the provider is connected and at least one
-verified Hearthstone target flow is active. Wait for **Ready with N target
-flows**.
+verified, stable Hearthstone gameplay flow on port `1119` or `3724` is active.
+Other matched traffic can make the status show target flows while the button
+correctly remains disabled. Enter a match and wait briefly for the gameplay
+connection.
 
 ### Orange Blizzard verification warning
 

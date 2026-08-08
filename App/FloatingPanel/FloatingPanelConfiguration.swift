@@ -2,7 +2,7 @@ import AppKit
 
 enum FloatingPanelConfiguration {
     static let autosaveName = "TavernBlinkFloatingDisconnectPanel"
-    static let contentSize = NSSize(width: 190, height: 62)
+    static let contentSize = NSSize(width: 86, height: 86)
     static let styleMask: NSWindow.StyleMask = [
         .borderless,
         .nonactivatingPanel
@@ -26,6 +26,11 @@ enum FloatingPanelConfiguration {
         panel.hasShadow = true
         panel.isReleasedWhenClosed = false
         panel.animationBehavior = .utilityWindow
+        panel.setContentSize(contentSize)
+    }
+
+    @MainActor
+    static func normalizeContentSize(of panel: NSPanel) {
         panel.setContentSize(contentSize)
     }
 }

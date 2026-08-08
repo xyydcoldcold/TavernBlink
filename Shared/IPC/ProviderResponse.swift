@@ -31,6 +31,7 @@ struct ProviderResponse: Codable, Equatable {
     let requestID: UUID
     let result: Result
     let activeFlowCount: Int
+    let disconnectibleFlowCount: Int?
     let closedFlowCount: Int
     let durationMilliseconds: Int
     let errorCode: String?
@@ -41,6 +42,7 @@ struct ProviderResponse: Codable, Equatable {
         for command: ProviderCommand,
         result: Result = .ok,
         activeFlowCount: Int,
+        disconnectibleFlowCount: Int? = nil,
         closedFlowCount: Int = 0,
         durationMilliseconds: Int = 0,
         errorCode: String? = nil,
@@ -52,6 +54,7 @@ struct ProviderResponse: Codable, Equatable {
             requestID: command.requestID,
             result: result,
             activeFlowCount: activeFlowCount,
+            disconnectibleFlowCount: disconnectibleFlowCount,
             closedFlowCount: closedFlowCount,
             durationMilliseconds: durationMilliseconds,
             errorCode: errorCode,
